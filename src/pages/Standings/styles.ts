@@ -26,6 +26,16 @@ export const Container = styled.div`
     display: flex;
     justify-content: space-between;
   }
+
+  li {
+    list-style-type: none;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    margin-top: 30px;
+  }
 `;
 
 export const PlayerCard = styled.div<{ side: string }>`
@@ -37,8 +47,6 @@ export const PlayerCard = styled.div<{ side: string }>`
 
   border-radius: 12px;
   background: linear-gradient(180deg, #666666 0%, #333333 100%);
-
-  margin-top: 30px;
 
   display: flex;
 `;
@@ -111,34 +119,29 @@ export const Score = styled.div<{ side: string }>`
     props.side === 'right' ? '12px 0px 0px 12px' : '0px 12px 12px 0px'};
 `;
 
-export const Tables = styled.div`
-  div {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 24px;
-    font-weight: bold;
-    color: var(--gray-1);
+export const Table = styled.div`
+  font-family: 'Open Sans', sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--gray-1);
 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 
-    height: 80px;
-    width: 250px;
+  height: 80px;
+  width: 250px;
 
-    margin-top: 30px;
+  span {
+    margin-top: auto;
+    font-family: 'Digital Numbers';
 
-    span {
-      margin-top: auto;
-      font-family: 'Digital Numbers';
+    background: linear-gradient(180deg, #cbcbcb 0%, #919191 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 
-      background: linear-gradient(180deg, #cbcbcb 0%, #919191 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-fill-color: transparent;
-
-      font-size: 18px;
-    }
+    font-size: 18px;
   }
 `;
