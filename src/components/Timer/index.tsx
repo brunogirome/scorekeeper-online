@@ -4,17 +4,19 @@ import { Container } from './styles';
 export function Timer() {
   const Ref = useRef<NodeJS.Timer | null>(null);
 
-  const tournament = { roundTime: 5, isPaused: true };
+  // Context variables
+  const tournament = { roundTime: 40, isPaused: true };
 
   const [roundTimeEnd, setRoundTimeEnd] = useState(0);
 
   const [play, setPlay] = useState(!tournament.isPaused);
 
   const [remainingTime, setRemainingTime] = useState(0);
+  // End of context variables
 
   const [minutesSeconds, setMinutesSeconds] = useState(
     tournament.roundTime > 9
-      ? tournament.roundTime
+      ? `${tournament.roundTime}:00`
       : `0${tournament.roundTime}:00`,
   );
 
@@ -39,13 +41,12 @@ export function Timer() {
   }, [play, tournament.roundTime, remainingTime, roundTimeEnd]);
 
   useEffect(() => {
-    let timeRemaining = roundTimeEnd - Date.parse(new Date().toISOString());
-
     if (Ref.current) clearInterval(Ref.current);
 
     if (roundTimeEnd > 0 && play) {
       const id = setInterval(() => {
-        timeRemaining = roundTimeEnd - Date.parse(new Date().toISOString());
+        const timeRemaining =
+          roundTimeEnd - Date.parse(new Date().toISOString());
 
         if (timeRemaining < 0) {
           setMilleseconds(':00');
