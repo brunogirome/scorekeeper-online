@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Container } from './styles';
 
 export function Timer() {
-  const Ref = useRef<any>(null);
+  const Ref = useRef<NodeJS.Timer | null>(null);
 
   const tournament = { roundTime: 5, isPaused: true };
 
@@ -13,9 +13,9 @@ export function Timer() {
   const [remainingTime, setRemainingTime] = useState(0);
 
   const [minutesSeconds, setMinutesSeconds] = useState(
-    (tournament.roundTime > 9
+    tournament.roundTime > 9
       ? tournament.roundTime
-      : '0' + tournament.roundTime) + ':00',
+      : `0${tournament.roundTime}:00`,
   );
 
   const [milleseconds, setMilleseconds] = useState(':00');
@@ -58,24 +58,24 @@ export function Timer() {
         const seconds = Math.floor((timeRemaining / 1000) % 60);
 
         setMinutesSeconds(
-          (minutes > 9 ? minutes : '0' + minutes) +
-            ':' +
-            (seconds > 9 ? seconds : '0' + seconds),
+          `${minutes > 9 ? minutes : `0${minutes}`}:${
+            seconds > 9 ? seconds : `0${seconds}`
+          }`,
         );
 
-        const milleseconds = Math.floor(timeRemaining % 1000);
+        const currentMilleseconds = Math.floor(timeRemaining % 1000);
 
-        let formattedMilleseconds: string = milleseconds.toString();
+        let formattedMilleseconds: string = currentMilleseconds.toString();
 
-        if (milleseconds < 100) {
-          formattedMilleseconds = '0' + milleseconds;
-        } else if (milleseconds < 10) {
-          formattedMilleseconds = '00' + milleseconds;
+        if (currentMilleseconds < 100) {
+          formattedMilleseconds = `0${currentMilleseconds}`;
+        } else if (currentMilleseconds < 10) {
+          formattedMilleseconds = `00${currentMilleseconds}`;
         }
 
         formattedMilleseconds = formattedMilleseconds.slice(0, 2);
 
-        setMilleseconds(':' + formattedMilleseconds);
+        setMilleseconds(`:${formattedMilleseconds}`);
       }, 10);
 
       Ref.current = id;
@@ -89,7 +89,9 @@ export function Timer() {
         <div>
           <p>{minutesSeconds}</p>
           <span>{milleseconds}</span>
-          <button onClick={playPause}>amongUs</button>
+          <button type="button" onClick={playPause}>
+            amongUs
+          </button>
         </div>
       </div>
     </Container>

@@ -4,7 +4,7 @@ import { Timer } from '../../components/Timer';
 
 export function Header() {
   const title = 'Regional Dimension Force - Duel Shop - São Paulo';
-  const round_description = 'Final';
+  const roundDescription = 'Final';
 
   return (
     <Container>
@@ -12,7 +12,7 @@ export function Header() {
         <div className="logo" />
         <div className="text">
           <h2>{title}</h2>
-          <h1>{round_description}</h1>
+          <h1>{roundDescription}</h1>
         </div>
         <Timer />
       </div>
