@@ -1,6 +1,13 @@
 import { Header } from '../Header';
 
-import { Container, PlayerCard, Score, PlayerText, Table } from './styles';
+import {
+  Container,
+  Bracket,
+  PlayerCard,
+  Score,
+  PlayerText,
+  Table,
+} from './styles';
 
 export function Standings() {
   const rounds = [
@@ -47,9 +54,9 @@ export function Standings() {
   ];
 
   return (
-    <>
+    <Container>
       <Header />
-      <Container>
+      <Bracket>
         <h1>MESA</h1>
         <ul>
           {rounds.map(round => (
@@ -85,7 +92,7 @@ export function Standings() {
             </li>
           ))}
         </ul>
-      </Container>
-    </>
+      </Bracket>
+    </Container>
   );
 }

@@ -1,6 +1,11 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
+  padding-top: 2.7vh;
+  padding-bottom: 2.7vh;
+`;
+
+export const Bracket = styled.div`
   width: 1280px;
 
   margin-left: auto;

@@ -25,10 +25,11 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   body {
+    font-family: 'Source Sans Pro';
+
     background-color: var(--background);
     -webkit-font-smoothing: antialiased;
-    padding-top:2.7vh;
-    padding-bottom: 2.7vh;
+    padding: 0;
   }
 
   button {
