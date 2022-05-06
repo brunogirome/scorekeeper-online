@@ -8,9 +8,21 @@ export const Container = styled.main`
 
   margin: 50px auto 0 auto;
 
-  background: red;
-
   height: calc(100vmin - 50px);
+
+  h2 {
+    margin: 10px auto;
+
+    color: #666666;
+
+    font-family: 'Source Sans Pro';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 24px;
+
+    text-transform: uppercase;
+  }
 
   section {
     display: flex;
@@ -199,6 +211,8 @@ export const PlayerTable = styled.div`
 `;
 
 export const TourntamentInfo = styled.div`
+  margin: 10px 10px 0 0;
+
   > div:first-child {
     padding: 15px 10px;
 
@@ -331,9 +345,183 @@ export const TourntamentInfo = styled.div`
       justify-content: end;
       align-items: end;
 
+      border-right: none !important;
+
       button {
-        width: 190px;
+        width: 170px;
         height: 30px;
+      }
+    }
+  }
+`;
+
+export const TournamentBracket = styled.div`
+  margin: 0 10px 0 0;
+
+  table {
+    border-collapse: collapse;
+
+    row-gap: 0;
+    column-gap: 0;
+
+    font-family: 'Source Sans Pro';
+    font-style: normal;
+    color: var(--gray-1);
+    font-weight: 700;
+
+    width: 100%;
+
+    text-transform: uppercase;
+
+    td {
+      padding: 1px;
+    }
+
+    > tr:first-child {
+      font-size: 14px;
+      line-height: 18px;
+
+      border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+
+      th {
+        text-align: left;
+
+        height: 35px;
+      }
+
+      .last-row {
+        display: flex;
+        align-items: center;
+        justify-content: end;
+
+        button {
+          font-family: 'Source Sans Pro';
+          font-style: normal;
+          font-weight: 700;
+          font-size: 10px;
+          line-height: 12px;
+          color: #fdfdfd;
+
+          margin-right: 10px;
+
+          text-transform: uppercase;
+
+          background: #4870d7;
+
+          border: 0;
+          padding: 0 16px;
+          transition: background-color 0.2s;
+
+          width: 85px;
+          height: 24px;
+          border-radius: 5px;
+
+          &:hover {
+            background: ${shade(0.2, '#4870d7')};
+          }
+        }
+      }
+    }
+
+    tr + tr {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+      padding-bottom: 10px;
+
+      .player-info {
+        width: 175px;
+      }
+
+      input {
+        height: 20px;
+        font-size: 12px;
+
+        display: flex;
+        align-items: center;
+
+        padding-left: 5px;
+
+        background: #fdfdfd;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        border-radius: 3px;
+      }
+
+      input .player-name {
+        width: 175px;
+      }
+
+      .table-number {
+        width: 32px;
+        font-size: 14px;
+        line-height: 18px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .vs-row {
+        span {
+          margin-top: 15px;
+        }
+
+        width: 30px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .player-score {
+        padding-top: 3px;
+
+        width: 42px;
+
+        input {
+          height: 40px;
+          width: 40px;
+
+          text-align: center;
+          padding: 0;
+
+          font-family: 'Source Sans Pro';
+          font-style: normal;
+          font-weight: 700;
+          font-size: 16px;
+          line-height: 20px;
+        }
+      }
+
+      .extra-info {
+        input {
+          width: 85px;
+          height: 20px;
+        }
+      }
+
+      p:first-child {
+        padding-top: 5px;
+
+        margin-bottom: 5px;
+      }
+
+      p + p {
+        font-size: 10px;
+
+        display: flex;
+        justify-content: space-between;
+
+        span {
+          padding-left: 28px;
+        }
+
+        input {
+          margin-left: 10px;
+          width: 125px;
+          height: 15px;
+
+          font-size: 10px;
+        }
       }
     }
   }

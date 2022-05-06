@@ -75,7 +75,7 @@ export function Standings() {
               </PlayerCard>
               <Table>
                 {round.table}
-                {round.extra_time > 0 && <span>+{round.extra_time}</span>}
+                {round.extra_time > 0 && <span>+00:{round.extra_time}0</span>}
               </Table>
               <PlayerCard side="right">
                 <Score side="right">{round.score_2}</Score>

@@ -1,4 +1,10 @@
-import { Container, Timer, PlayerTable, TourntamentInfo } from './styles';
+import {
+  Container,
+  Timer,
+  PlayerTable,
+  TourntamentInfo,
+  TournamentBracket,
+} from './styles';
 
 export function Dashboard() {
   const minutesSeconds = '40:00';
@@ -100,7 +106,7 @@ export function Dashboard() {
           </div>
         </TourntamentInfo>
         <h2>Organização das mesas</h2>
-        <div>
+        <TournamentBracket>
           <table>
             <tr>
               <th> </th>
@@ -110,15 +116,17 @@ export function Dashboard() {
               <th> </th>
               <th>Player2</th>
               <th>Tempo Extra</th>
-              <th>
+              <th className="last-row">
                 <button type="button">Adicionar</button>
               </th>
             </tr>
             <tr>
-              <td>1</td>
-              <td>
+              <td className="table-number">
+                <span>1</span>
+              </td>
+              <td className="player-info">
                 <div>
-                  <p>
+                  <p className="player-name">
                     <input type="text" placeholder="nome do jogador" />
                   </p>
                   <p>
@@ -127,16 +135,18 @@ export function Dashboard() {
                   </p>
                 </div>
               </td>
-              <td>
+              <td className="player-score">
                 <input type="text" placeholder="0" />
               </td>
-              <td>VS.</td>
-              <td>
+              <td className="vs-row">
+                <span>VS.</span>
+              </td>
+              <td className="player-score">
                 <input type="text" placeholder="0" />
               </td>
-              <td>
+              <td className="player-info">
                 <div>
-                  <p>
+                  <p className="player-name">
                     <input type="text" placeholder="nome do jogador" />
                   </p>
                   <p>
@@ -145,12 +155,13 @@ export function Dashboard() {
                   </p>
                 </div>
               </td>
-              <td>
+              <td className="extra-info">
                 <input type="text" placeholder="Tempo em minutos" />
               </td>
+              <td> </td>
             </tr>
           </table>
-        </div>
+        </TournamentBracket>
       </section>
     </Container>
   );
