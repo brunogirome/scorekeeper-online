@@ -36,7 +36,7 @@ export const Container = styled.main`
   }
 `;
 
-export const Timer = styled.div`
+export const TimerContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -45,7 +45,7 @@ export const Timer = styled.div`
 
   margin: 10px 5px 5px 10px;
 
-  h1 {
+  .timer-number {
     font-style: normal;
     font-weight: 700;
     font-size: 72px;
@@ -59,7 +59,6 @@ export const Timer = styled.div`
 
     span {
       font-size: 48px;
-      margin-left: -10px;
     }
   }
 
@@ -102,11 +101,9 @@ export const Timer = styled.div`
 
     padding: 15px 10px;
 
-    color: red;
-
     font-family: 'Source Sans Pro';
 
-    p {
+    form {
       color: #333333;
 
       width: 250px;
@@ -136,7 +133,7 @@ export const Timer = styled.div`
         border-radius: 3px;
       }
 
-      & + p {
+      & + form {
         margin-top: 15px;
       }
     }

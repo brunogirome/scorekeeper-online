@@ -105,21 +105,43 @@ export function TimerProvider({ children }: Props) {
     }
   }, [isPlaying]);
 
+  function parseIntWithNull(value: string | null): number {
+    return parseInt(value || '0', 10);
+  }
+
   function onStorageUpdate(e: StorageEvent) {
     const { key, newValue } = e;
 
-    if (key === '@TOOnline:timer:isPlaying') {
-      setIsPlaying(newValue === 'true');
+    switch (key) {
+      case '@TOOnline:timer:isPlaying':
+        setIsPlaying(newValue === 'true');
+        break;
+      case '@TOOnline:timer:roundTime':
+        setRoundTimeLocal(parseIntWithNull(newValue));
+        break;
+      default:
     }
   }
 
   useEffect(() => {
     setIsPlaying(localStorage.getItem('@TOOnline:timer:isPlaying') === 'true');
+
     window.addEventListener('storage', onStorageUpdate);
     return () => {
       window.removeEventListener('storage', onStorageUpdate);
     };
   }, [isPlaying]);
+
+  useEffect(() => {
+    setRoundTimeLocal(
+      parseIntWithNull(localStorage.getItem('@TOOnline:timer:roundTime')),
+    );
+
+    window.addEventListener('storage', onStorageUpdate);
+    return () => {
+      window.removeEventListener('storage', onStorageUpdate);
+    };
+  }, [roundTime]);
 
   const provider = useMemo(
     () => ({

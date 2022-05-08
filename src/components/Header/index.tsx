@@ -1,10 +1,13 @@
-import { Container } from './styles';
+import { Container, TimerContainer } from './styles';
 
-import { Timer } from '../../components/Timer';
+import { Timer } from '../Timer';
+import { useTimer } from '../../Hooks/timerContext';
 
 export function Header() {
   const title = 'Regional Dimension Force - Duel Shop - São Paulo';
   const roundDescription = 'Final';
+
+  const { roundTime } = useTimer();
 
   return (
     <Container>
@@ -14,7 +17,10 @@ export function Header() {
           <h2>{title}</h2>
           <h1>{roundDescription}</h1>
         </div>
-        <Timer />
+        <TimerContainer>
+          <h1>{roundTime} minutos</h1>
+          <Timer />
+        </TimerContainer>
       </div>
     </Container>
   );

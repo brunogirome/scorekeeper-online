@@ -1,13 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { Container } from './styles';
 
 import { useTimer } from '../../Hooks/timerContext';
 
-export const Timer: React.FC = () => {
+export function Timer() {
   const Ref = useRef<NodeJS.Timer | null>(null);
 
-  const { roundTime, remainingTime, isPlaying, roundTimeEnd, playPause } =
-    useTimer();
+  const { roundTime, remainingTime, isPlaying, roundTimeEnd } = useTimer();
 
   const formatTime = (
     timeInMilleSeconds: number,
@@ -76,17 +74,11 @@ export const Timer: React.FC = () => {
   }, [isPlaying]);
 
   return (
-    <Container>
-      <h1>{roundTime || 0} minutos</h1>
-      <div>
-        <div>
-          <p>{minutesSeconds}</p>
-          <span>{milleseconds}</span>
-          <button type="button" onClick={playPause}>
-            amongUs
-          </button>
-        </div>
-      </div>
-    </Container>
+    <div className="timer-number">
+      <p>
+        {minutesSeconds}
+        <span>{milleseconds}</span>
+      </p>
+    </div>
   );
-};
+}

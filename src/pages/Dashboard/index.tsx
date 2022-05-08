@@ -1,40 +1,75 @@
 import {
+  ChangeEvent,
+  FormEvent,
+  useCallback,
+  useState,
+  FocusEvent,
+} from 'react';
+
+import {
   Container,
-  Timer,
+  TimerContainer,
   PlayerTable,
   TourntamentInfo,
   TournamentBracket,
 } from './styles';
 
 import { useTimer } from '../../Hooks/timerContext';
+import { Timer } from '../../components/Timer/index';
 
 export function Dashboard() {
-  const { playPause } = useTimer();
+  const { playPause, setRoundTime, roundTime } = useTimer();
 
-  const minutesSeconds = '40:00';
-  const milleseconds = ':00';
+  const [roundTimeValue, setRoundTimeValue] = useState<string>(
+    roundTime.toString(),
+  );
+
+  const handleRoundTime = useCallback(
+    (e: FormEvent) => {
+      e.preventDefault();
+      setRoundTimeValue(roundTimeValue);
+      setRoundTime({ minutes: parseInt(roundTimeValue, 10) });
+    },
+    [roundTimeValue],
+  );
+
+  const handleRountTimeChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setRoundTimeValue(e.target.value);
+    },
+    [],
+  );
+
+  // const handleRoundTimeBlur = useCallback((e: FocusEvent<HTMLInputElement>) => {
+  //   setRoundTimeValue(e.target.value);
+  //   setRoundTime({ minutes: parseInt(roundTimeValue, 10) });
+  // }, []);
 
   return (
     <Container>
       <section>
-        <Timer>
-          <h1>
-            {minutesSeconds} <span>{milleseconds}</span>
-          </h1>
+        <TimerContainer>
+          <Timer />
           <button type="button" onClick={playPause}>
             Iniciar rodada
           </button>
           <div>
-            <p>
+            <form onSubmit={handleRoundTime}>
               <span>Tempo</span>
-              <input type="text" placeholder="Tempo em minutos" />
-            </p>
-            <p>
+              <input
+                type="text"
+                placeholder="Tempo em minutos"
+                value={roundTimeValue}
+                onChange={handleRountTimeChange}
+                // onBlur={handleRoundTimeBlur}
+              />
+            </form>
+            <form>
               <span>Descrição</span>
               <input type="text" placeholder="Descrição da rodada" />
-            </p>
+            </form>
           </div>
-        </Timer>
+        </TimerContainer>
         <PlayerTable>
           <table cellSpacing={0} cellPadding={0}>
             <thead>
@@ -83,7 +118,7 @@ export function Dashboard() {
                 Rodadas: <span>3</span>
               </p>
               <p>
-                Início: <span>13:30</span>
+                Início da rodada: <span>13:30</span>
               </p>
               <div>
                 <button type="button">Finalizar rodada</button>
