@@ -1,17 +1,18 @@
+import { BrowserRouter as Router } from 'react-router-dom';
+
+import { Routes } from './routes';
+
 import { GlobalStyle } from './styles/global';
 
 import { AppProvider } from './Hooks';
 
-import { Standings } from './pages/Standings';
-// import { Dashboard } from './pages/Dashboard';
-
 export function App() {
   return (
-    <>
+    <Router>
       <AppProvider>
-        <Standings />
+        <Routes />
       </AppProvider>
       <GlobalStyle />
-    </>
+    </Router>
   );
 }

@@ -6,7 +6,11 @@ import {
   TournamentBracket,
 } from './styles';
 
+import { useTimer } from '../../Hooks/timerContext';
+
 export function Dashboard() {
+  const { playPause } = useTimer();
+
   const minutesSeconds = '40:00';
   const milleseconds = ':00';
 
@@ -17,7 +21,9 @@ export function Dashboard() {
           <h1>
             {minutesSeconds} <span>{milleseconds}</span>
           </h1>
-          <button type="button">Iniciar rodada</button>
+          <button type="button" onClick={playPause}>
+            Iniciar rodada
+          </button>
           <div>
             <p>
               <span>Tempo</span>
