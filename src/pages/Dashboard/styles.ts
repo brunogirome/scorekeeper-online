@@ -372,22 +372,15 @@ export const TournamentBracket = styled.div`
     width: 100%;
 
     text-transform: uppercase;
-
     td {
       padding: 1px;
     }
 
-    > tr:first-child {
+    thead {
       font-size: 14px;
       line-height: 18px;
 
       border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-
-      th {
-        text-align: left;
-
-        height: 35px;
-      }
 
       .last-row {
         display: flex;
@@ -421,106 +414,125 @@ export const TournamentBracket = styled.div`
           }
         }
       }
+
+      th {
+        text-align: left;
+
+        height: 35px;
+      }
     }
-
-    tr + tr {
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-
-      padding-bottom: 10px;
-
-      .player-info {
-        width: 175px;
-      }
-
-      input {
-        height: 20px;
-        font-size: 12px;
-
-        display: flex;
-        align-items: center;
-
-        padding-left: 5px;
-
-        background: #fdfdfd;
-        border: 1px solid rgba(0, 0, 0, 0.15);
-        border-radius: 3px;
-      }
-
-      input .player-name {
-        width: 175px;
-      }
-
-      .table-number {
-        width: 32px;
-        font-size: 14px;
-        line-height: 18px;
-
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      .vs-row {
-        span {
-          margin-top: 15px;
+    tbody {
+      tr {
+        /* Chrome, Safari, Edge, Opera */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
         }
 
-        width: 30px;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .player-score {
-        padding-top: 3px;
-
-        width: 42px;
-
-        input {
-          height: 40px;
-          width: 40px;
-
-          text-align: center;
-          padding: 0;
-
-          font-family: 'Source Sans Pro';
-          font-style: normal;
-          font-weight: 700;
-          font-size: 16px;
-          line-height: 20px;
+        /* Firefox */
+        input[type='number'] {
+          -moz-appearance: textfield;
         }
-      }
 
-      .extra-info {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+        padding-bottom: 10px;
+
+        .player-info {
+          width: 175px;
+        }
+
         input {
-          width: 85px;
           height: 20px;
-        }
-      }
+          font-size: 12px;
 
-      p:first-child {
-        padding-top: 5px;
+          display: flex;
+          align-items: center;
 
-        margin-bottom: 5px;
-      }
+          padding-left: 5px;
 
-      p + p {
-        font-size: 10px;
-
-        display: flex;
-        justify-content: space-between;
-
-        span {
-          padding-left: 28px;
+          background: #fdfdfd;
+          border: 1px solid rgba(0, 0, 0, 0.15);
+          border-radius: 3px;
         }
 
-        input {
-          margin-left: 10px;
-          width: 125px;
-          height: 15px;
+        input .player-name {
+          width: 175px;
+        }
 
+        .table-number {
+          width: 32px;
+          font-size: 14px;
+          line-height: 18px;
+
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .vs-row {
+          span {
+            margin-top: 15px;
+          }
+
+          width: 30px;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .player-score {
+          padding-top: 3px;
+
+          width: 42px;
+
+          input {
+            height: 40px;
+            width: 40px;
+
+            text-align: center;
+            padding: 0;
+
+            font-family: 'Source Sans Pro';
+            font-style: normal;
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 20px;
+          }
+        }
+
+        .extra-info {
+          input {
+            width: 85px;
+            height: 20px;
+          }
+        }
+
+        p:first-child {
+          padding-top: 5px;
+
+          margin-bottom: 5px;
+        }
+
+        p + p {
           font-size: 10px;
+
+          display: flex;
+          justify-content: space-between;
+
+          span {
+            padding-left: 28px;
+          }
+
+          input {
+            margin-left: 10px;
+            width: 125px;
+            height: 15px;
+
+            font-size: 10px;
+          }
         }
       }
     }

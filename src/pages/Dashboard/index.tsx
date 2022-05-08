@@ -37,27 +37,31 @@ export function Dashboard() {
         </Timer>
         <PlayerTable>
           <table cellSpacing={0} cellPadding={0}>
-            <tr>
-              <th>Player</th>
-              <th>Score</th>
-            </tr>
-            <tr>
-              <td colSpan={2}>
-                <div>add</div>
-              </td>
-            </tr>
-            <tr>
-              <td>Player name</td>
-              <td>10 V - 10 E - 10 D</td>
-            </tr>
-            <tr>
-              <td>Player name</td>
-              <td>0 V - 0 E - 0 D</td>
-            </tr>
-            <tr>
-              <td>Player name</td>
-              <td>0 V - 0 E - 0 D</td>
-            </tr>
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colSpan={2}>
+                  <div>add</div>
+                </td>
+              </tr>
+              <tr>
+                <td>Player name</td>
+                <td>10 V - 10 E - 10 D</td>
+              </tr>
+              <tr>
+                <td>Player name</td>
+                <td>0 V - 0 E - 0 D</td>
+              </tr>
+              <tr>
+                <td>Player name</td>
+                <td>0 V - 0 E - 0 D</td>
+              </tr>
+            </tbody>
           </table>
         </PlayerTable>
       </section>
@@ -114,58 +118,62 @@ export function Dashboard() {
         <h2>Organização das mesas</h2>
         <TournamentBracket>
           <table>
-            <tr>
-              <th> </th>
-              <th>Player 1</th>
-              <th> </th>
-              <th> </th>
-              <th> </th>
-              <th>Player2</th>
-              <th>Tempo Extra</th>
-              <th className="last-row">
-                <button type="button">Adicionar</button>
-              </th>
-            </tr>
-            <tr>
-              <td className="table-number">
-                <span>1</span>
-              </td>
-              <td className="player-info">
-                <div>
-                  <p className="player-name">
-                    <input type="text" placeholder="nome do jogador" />
-                  </p>
-                  <p>
-                    <span>Deck</span>
-                    <input type="text" placeholder="Deck utilizado" />
-                  </p>
-                </div>
-              </td>
-              <td className="player-score">
-                <input type="text" placeholder="0" />
-              </td>
-              <td className="vs-row">
-                <span>VS.</span>
-              </td>
-              <td className="player-score">
-                <input type="text" placeholder="0" />
-              </td>
-              <td className="player-info">
-                <div>
-                  <p className="player-name">
-                    <input type="text" placeholder="nome do jogador" />
-                  </p>
-                  <p>
-                    <span>Deck</span>
-                    <input type="text" placeholder="Deck utilizado" />
-                  </p>
-                </div>
-              </td>
-              <td className="extra-info">
-                <input type="text" placeholder="Tempo em minutos" />
-              </td>
-              <td> </td>
-            </tr>
+            <thead>
+              <tr>
+                <th> </th>
+                <th>Player 1</th>
+                <th> </th>
+                <th> </th>
+                <th> </th>
+                <th>Player2</th>
+                <th>Tempo Extra</th>
+                <th className="last-row">
+                  <button type="button">Adicionar</button>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="table-number">
+                  <span>1</span>
+                </td>
+                <td className="player-info">
+                  <div>
+                    <p className="player-name">
+                      <input type="text" placeholder="nome do jogador" />
+                    </p>
+                    <p>
+                      <span>Deck</span>
+                      <input type="text" placeholder="Deck utilizado" />
+                    </p>
+                  </div>
+                </td>
+                <td className="player-score">
+                  <input type="text" placeholder="0" />
+                </td>
+                <td className="vs-row">
+                  <span>VS.</span>
+                </td>
+                <td className="player-score">
+                  <input type="number" placeholder="0" />
+                </td>
+                <td className="player-info">
+                  <div>
+                    <p className="player-name">
+                      <input type="text" placeholder="nome do jogador" />
+                    </p>
+                    <p>
+                      <span>Deck</span>
+                      <input type="text" placeholder="Deck utilizado" />
+                    </p>
+                  </div>
+                </td>
+                <td className="extra-info">
+                  <input type="number" placeholder="Tempo em minutos" />
+                </td>
+                <td> </td>
+              </tr>
+            </tbody>
           </table>
         </TournamentBracket>
       </section>

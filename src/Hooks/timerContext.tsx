@@ -105,11 +105,11 @@ export function TimerProvider({ children }: Props) {
     }
   }, [isPlaying]);
 
-  function onStorageUpdate(e: any) {
+  function onStorageUpdate(e: StorageEvent) {
     const { key, newValue } = e;
 
     if (key === '@TOOnline:timer:isPlaying') {
-      setIsPlaying(newValue);
+      setIsPlaying(newValue === 'true');
     }
   }
 
