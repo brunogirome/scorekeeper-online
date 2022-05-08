@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Container } from './styles';
 
-export function Timer() {
+import { useTimer } from '../../Hooks/timerContext';
+
+export const Timer: React.FC = () => {
   const Ref = useRef<NodeJS.Timer | null>(null);
 
   // Context variables
@@ -97,4 +99,4 @@ export function Timer() {
       </div>
     </Container>
   );
-}
+};
