@@ -4,6 +4,7 @@ import React, {
   useState,
   useContext,
   useMemo,
+  useEffect,
 } from 'react';
 
 interface TimerContextData {
@@ -102,6 +103,22 @@ export function TimerProvider({ children }: Props) {
       );
       setRoundTimeEnd(newRoundTimeEnd);
     }
+  }, [isPlaying]);
+
+  function onStorageUpdate(e: any) {
+    const { key, newValue } = e;
+
+    if (key === '@TOOnline:timer:isPlaying') {
+      setIsPlaying(newValue);
+    }
+  }
+
+  useEffect(() => {
+    setIsPlaying(localStorage.getItem('@TOOnline:timer:isPlaying') === 'true');
+    window.addEventListener('storage', onStorageUpdate);
+    return () => {
+      window.removeEventListener('storage', onStorageUpdate);
+    };
   }, [isPlaying]);
 
   const provider = useMemo(
