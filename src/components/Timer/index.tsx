@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Container } from './styles';
 
 import { useTimer } from '../../Hooks/timerContext';
@@ -6,46 +6,56 @@ import { useTimer } from '../../Hooks/timerContext';
 export const Timer: React.FC = () => {
   const Ref = useRef<NodeJS.Timer | null>(null);
 
-  // Context variables
-  const tournament = { roundTime: 40, isPaused: true };
+  const { roundTime, remainingTime, isPlaying, roundTimeEnd, playPause } =
+    useTimer();
 
-  const [roundTimeEnd, setRoundTimeEnd] = useState(0);
+  const formatTime = (
+    timeInMilleSeconds: number,
+    type: 'minutesSeconds' | 'milleseconds',
+  ): string => {
+    if (type === 'milleseconds') {
+      const milleseconds = Math.floor(timeInMilleSeconds % 1000);
 
-  const [play, setPlay] = useState(!tournament.isPaused);
+      let formattedMilleseconds: string = milleseconds.toString();
 
-  const [remainingTime, setRemainingTime] = useState(0);
-  // End of context variables
+      if (milleseconds < 100) {
+        formattedMilleseconds = `0${milleseconds}`;
+      } else if (milleseconds < 10) {
+        formattedMilleseconds = `00${milleseconds}`;
+      }
 
-  const [minutesSeconds, setMinutesSeconds] = useState(
-    tournament.roundTime > 9
-      ? `${tournament.roundTime}:00`
-      : `0${tournament.roundTime}:00`,
-  );
-
-  const [milleseconds, setMilleseconds] = useState(':00');
-
-  const playPause = useCallback(() => {
-    if (play) {
-      setRemainingTime(roundTimeEnd - Date.parse(new Date().toISOString()));
-    } else if (remainingTime > 0) {
-      setRoundTimeEnd(Date.parse(new Date().toISOString()) + remainingTime);
+      return `:${formattedMilleseconds.slice(0, 2)}`;
     }
 
-    setPlay(!play);
+    const minutes = Math.floor(timeInMilleSeconds / 1000 / 60);
 
-    if (roundTimeEnd === 0) {
-      const startedDate = new Date();
+    const seconds = Math.floor((timeInMilleSeconds / 1000) % 60);
 
-      setRoundTimeEnd(
-        startedDate.setMinutes(startedDate.getMinutes() + tournament.roundTime),
-      );
+    return `${minutes > 9 ? minutes : `0${minutes}`}:${
+      seconds > 9 ? seconds : `0${seconds}`
+    }`;
+  };
+
+  const [minutesSeconds, setMinutesSeconds] = useState<string>(() => {
+    if (remainingTime === 0) {
+      return `${roundTime > 9 ? roundTime : `0${roundTime}`}:00`;
     }
-  }, [play, tournament.roundTime, remainingTime, roundTimeEnd]);
+
+    return formatTime(remainingTime, 'minutesSeconds');
+  });
+
+  const [milleseconds, setMilleseconds] = useState<string>(() => {
+    if (remainingTime === 0) {
+      return ':00';
+    }
+
+    return formatTime(remainingTime, 'milleseconds');
+  });
 
   useEffect(() => {
     if (Ref.current) clearInterval(Ref.current);
 
-    if (roundTimeEnd > 0 && play) {
+    if (roundTimeEnd > 0 && isPlaying) {
       const id = setInterval(() => {
         const timeRemaining =
           roundTimeEnd - Date.parse(new Date().toISOString());
@@ -56,38 +66,18 @@ export const Timer: React.FC = () => {
           return;
         }
 
-        const minutes = Math.floor(timeRemaining / 1000 / 60);
+        setMinutesSeconds(formatTime(timeRemaining, 'minutesSeconds'));
 
-        const seconds = Math.floor((timeRemaining / 1000) % 60);
-
-        setMinutesSeconds(
-          `${minutes > 9 ? minutes : `0${minutes}`}:${
-            seconds > 9 ? seconds : `0${seconds}`
-          }`,
-        );
-
-        const currentMilleseconds = Math.floor(timeRemaining % 1000);
-
-        let formattedMilleseconds: string = currentMilleseconds.toString();
-
-        if (currentMilleseconds < 100) {
-          formattedMilleseconds = `0${currentMilleseconds}`;
-        } else if (currentMilleseconds < 10) {
-          formattedMilleseconds = `00${currentMilleseconds}`;
-        }
-
-        formattedMilleseconds = formattedMilleseconds.slice(0, 2);
-
-        setMilleseconds(`:${formattedMilleseconds}`);
+        setMilleseconds(formatTime(timeRemaining, 'milleseconds'));
       }, 10);
 
       Ref.current = id;
     }
-  }, [play, roundTimeEnd]);
+  }, [isPlaying]);
 
   return (
     <Container>
-      <h1>{tournament.roundTime} minutos</h1>
+      <h1>{roundTime || 0} minutos</h1>
       <div>
         <div>
           <p>{minutesSeconds}</p>

@@ -14,14 +14,14 @@ export function Standings() {
     {
       table: 1,
       player1: {
-        name: 'Player 1',
+        name: 'Rafael Souza Dragons',
         deck: 'Player deck',
         wins: 5,
         draws: 0,
         looses: 0,
       },
       player2: {
-        name: 'Player 2',
+        name: 'Dudu "FizzSuaMãeChorar"',
         deck: 'Player deck',
         wins: 4,
         draws: 0,
@@ -60,7 +60,7 @@ export function Standings() {
         <h1>MESA</h1>
         <ul>
           {rounds.map(round => (
-            <li>
+            <li key={round.table}>
               <PlayerCard side="left">
                 <PlayerText side="left">
                   <p>
