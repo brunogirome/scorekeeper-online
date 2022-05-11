@@ -119,6 +119,12 @@ export function TimerProvider({ children }: Props) {
       case '@TOOnline:timer:roundTime':
         setRoundTimeLocal(parseIntWithNull(newValue));
         break;
+      case '@TOOnline:timer:roundTimeEnd':
+        setRoundTimeEnd(parseIntWithNull(newValue));
+        break;
+      case '@TOOnline:timer:remainingTime':
+        setRemainingTime(parseIntWithNull(newValue));
+        break;
       default:
     }
   }
@@ -142,6 +148,28 @@ export function TimerProvider({ children }: Props) {
       window.removeEventListener('storage', onStorageUpdate);
     };
   }, [roundTime]);
+
+  useEffect(() => {
+    setRoundTimeEnd(
+      parseIntWithNull(localStorage.getItem('@TOOnline:timer:roundTimeEnd')),
+    );
+
+    window.addEventListener('storage', onStorageUpdate);
+    return () => {
+      window.removeEventListener('storage', onStorageUpdate);
+    };
+  }, [roundTimeEnd]);
+
+  useEffect(() => {
+    setRemainingTime(
+      parseIntWithNull(localStorage.getItem('@TOOnline:timer:remainingTime')),
+    );
+
+    window.addEventListener('storage', onStorageUpdate);
+    return () => {
+      window.removeEventListener('storage', onStorageUpdate);
+    };
+  }, [remainingTime]);
 
   const provider = useMemo(
     () => ({
