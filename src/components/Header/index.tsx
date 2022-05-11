@@ -2,20 +2,20 @@ import { Container, TimerContainer } from './styles';
 
 import { Timer } from '../Timer';
 import { useTimer } from '../../Hooks/timerContext';
+import { useTournament } from '../../Hooks/tournamentContext';
 
 export function Header() {
-  const title = 'Regional Dimension Force - Duel Shop - São Paulo';
-  const roundDescription = 'Final';
-
   const { roundTime } = useTimer();
+
+  const { tournament } = useTournament();
 
   return (
     <Container>
       <div className="content">
         <div className="logo" />
         <div className="text">
-          <h2>{title}</h2>
-          <h1>{roundDescription}</h1>
+          <h2>{tournament.tournamentName}</h2>
+          <h1>{tournament.roundDescription}</h1>
         </div>
         <TimerContainer>
           <h1>{roundTime} minutos</h1>

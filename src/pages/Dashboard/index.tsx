@@ -1,10 +1,4 @@
-import {
-  ChangeEvent,
-  FormEvent,
-  useCallback,
-  useState,
-  FocusEvent,
-} from 'react';
+import { ChangeEvent, FormEvent, useCallback, useState } from 'react';
 
 import {
   Container,
@@ -15,13 +9,49 @@ import {
 } from './styles';
 
 import { useTimer } from '../../Hooks/timerContext';
+import { useTournament } from '../../Hooks/tournamentContext';
 import { Timer } from '../../components/Timer/index';
 
 export function Dashboard() {
   const { playPause, setRoundTime, roundTime } = useTimer();
 
+  const { tournament, setTournament } = useTournament();
+
+  const [tournamentNameLocal, setTournamentName] = useState<string>(
+    tournament.tournamentName,
+  );
+
+  const [roundDescriptionLocal, setRoundDescription] = useState<string>(
+    tournament.roundDescription,
+  );
+
   const [roundTimeValue, setRoundTimeValue] = useState<string>(
     roundTime.toString(),
+  );
+
+  const handleTournamentName = useCallback(
+    (e: FormEvent) => {
+      e.preventDefault();
+
+      const tournamentLocal = tournament;
+
+      tournament.tournamentName = tournamentNameLocal;
+
+      setTournament({ tournament: { ...tournamentLocal } });
+    },
+    [tournamentNameLocal],
+  );
+  const handleTournamentRound = useCallback(
+    (e: FormEvent) => {
+      e.preventDefault();
+
+      const tournamentLocal = tournament;
+
+      tournament.roundDescription = roundDescriptionLocal;
+
+      setTournament({ tournament: { ...tournamentLocal } });
+    },
+    [roundDescriptionLocal],
   );
 
   const handleRoundTime = useCallback(
@@ -33,17 +63,26 @@ export function Dashboard() {
     [roundTimeValue],
   );
 
-  const handleRountTimeChange = useCallback(
+  const handleRoundTimeChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       setRoundTimeValue(e.target.value);
     },
     [],
   );
 
-  // const handleRoundTimeBlur = useCallback((e: FocusEvent<HTMLInputElement>) => {
-  //   setRoundTimeValue(e.target.value);
-  //   setRoundTime({ minutes: parseInt(roundTimeValue, 10) });
-  // }, []);
+  const handleTournamentNameChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setTournamentName(e.target.value);
+    },
+    [],
+  );
+
+  const handleTournamentRoundDescription = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setRoundDescription(e.target.value);
+    },
+    [],
+  );
 
   return (
     <Container>
@@ -60,13 +99,17 @@ export function Dashboard() {
                 type="text"
                 placeholder="Tempo em minutos"
                 value={roundTimeValue}
-                onChange={handleRountTimeChange}
-                // onBlur={handleRoundTimeBlur}
+                onChange={handleRoundTimeChange}
               />
             </form>
-            <form>
+            <form onSubmit={handleTournamentRound}>
               <span>Descrição</span>
-              <input type="text" placeholder="Descrição da rodada" />
+              <input
+                type="text"
+                placeholder="Descrição da rodada"
+                value={roundDescriptionLocal}
+                onChange={handleTournamentRoundDescription}
+              />
             </form>
           </div>
         </TimerContainer>
@@ -103,11 +146,15 @@ export function Dashboard() {
       <section>
         <TourntamentInfo>
           <div>
-            <span>Nome do torneio:</span>
-            <input
-              type="text"
-              placeholder="Nome que será exibido na tela de pontuação"
-            />
+            <form onSubmit={handleTournamentName}>
+              <span>Nome do torneio:</span>
+              <input
+                type="text"
+                placeholder="Nome que será exibido na tela de pontuação"
+                value={tournamentNameLocal}
+                onChange={handleTournamentNameChange}
+              />
+            </form>
           </div>
           <div>
             <div className="generalInfo">
