@@ -1,4 +1,10 @@
-import { useState, useCallback, createContext, useMemo } from 'react';
+import {
+  useState,
+  useCallback,
+  createContext,
+  useMemo,
+  useContext,
+} from 'react';
 
 interface Player {
   id: string;
@@ -9,7 +15,7 @@ interface Player {
   current_deck: string;
 }
 
-interface PlayerContext {
+interface PlayerContextData {
   players: Player[];
   getPlayer(id: string): Player | null;
   addPlayer({ player }: { player: Player }): void;
@@ -21,7 +27,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-const PlayerContext = createContext<PlayerContext>({} as PlayerContext);
+const PlayerContext = createContext<PlayerContextData>({} as PlayerContextData);
 
 export function PlayerProvider({ children }: Props) {
   const getLocalStorage = useCallback(
@@ -98,4 +104,10 @@ export function PlayerProvider({ children }: Props) {
   return (
     <PlayerContext.Provider value={provider}>{children}</PlayerContext.Provider>
   );
+}
+
+export function usePlayer(): PlayerContextData {
+  const context = useContext(PlayerContext);
+
+  return context;
 }
