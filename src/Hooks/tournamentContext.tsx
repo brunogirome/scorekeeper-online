@@ -7,6 +7,21 @@ import {
   useContext,
 } from 'react';
 
+import { Player } from './playerContext';
+import { getLocalStorage } from '../utils/getLocalStorage';
+
+interface Standing {
+  round: number;
+  table: number;
+  player1: Player;
+  player2: Player;
+  scorePlayer1: number;
+  scorePlayer2: number;
+  scoreTournamentPlayer1: string;
+  scoreTournamentPlayer2: string;
+  timeExtension: number;
+}
+
 interface Tournament {
   id: string;
   tournamentName: string;
@@ -20,6 +35,16 @@ interface Tournament {
 
 interface TournamentContextData {
   tournament: Tournament;
+  standings: Standing[];
+  addStanding({ standing }: { standing: Standing }): void;
+  editStandings({
+    table,
+    editedStanding,
+  }: {
+    table: number;
+    editedStanding: Standing;
+  }): void;
+  removeStanding(table: number): void;
   setTournament({ tournament }: { tournament: Tournament }): void;
 }
 
@@ -32,15 +57,13 @@ const TournamentContext = createContext<TournamentContextData>(
 );
 
 export function TournamentProvider({ children }: Props) {
-  const getLocalStorage = useCallback(
-    () =>
-      JSON.parse(
-        localStorage.getItem('@TOOnline:tournament') || '{}',
-      ) as Tournament,
-    [],
+  const [data, setData] = useState<Tournament>(() =>
+    getLocalStorage<Tournament>('@TOOnline:tournament'),
   );
 
-  const [data, setData] = useState<Tournament>(() => getLocalStorage());
+  const [standings, setStandings] = useState<Standing[]>(() =>
+    getLocalStorage<Standing[]>('@TOOnline:tournament:standings'),
+  );
 
   const setTournament = useCallback(
     ({ tournament }: { tournament: Tournament }) => {
@@ -50,27 +73,100 @@ export function TournamentProvider({ children }: Props) {
     [setData],
   );
 
+  const addStanding = useCallback(
+    ({ standing }: { standing: Standing }) => {
+      const newStandings = [...standings, standing];
+
+      localStorage.setItem(
+        '@TOOnline:tournament:standings',
+        JSON.stringify(newStandings),
+      );
+      setStandings(newStandings);
+    },
+    [standings],
+  );
+
+  const removeStanding = useCallback(
+    (table: number) => {
+      const newStandings = standings;
+
+      const index = standings.findIndex(standing => standing.table === table);
+
+      newStandings.slice(index, 1);
+
+      localStorage.setItem(
+        '@TOOnline:tournament:standings',
+        JSON.stringify(newStandings),
+      );
+      setStandings({ ...newStandings });
+    },
+    [standings],
+  );
+
+  const editStandings = useCallback(
+    ({
+      table,
+      editedStanding,
+    }: {
+      table: number;
+      editedStanding: Standing;
+    }) => {
+      const newStandings = standings;
+
+      const index = standings.findIndex(standing => standing.table === table);
+
+      newStandings[index] = editedStanding;
+
+      localStorage.setItem(
+        '@TOOnline:tournament:standings',
+        JSON.stringify(newStandings),
+      );
+      setStandings({ ...newStandings });
+    },
+    [standings],
+  );
+
   function onStorageUpdate(e: StorageEvent) {
     const { key, newValue } = e;
 
-    if (key === '@TOOnline:tournament') {
-      setData(JSON.parse(newValue || '') as Tournament);
+    switch (key) {
+      case '@TOOnline:tournament':
+        setData(JSON.parse(newValue || '{}') as Tournament);
+        break;
+      case '@TOOnline:tournament:standings':
+        setStandings(JSON.parse(newValue || '[]') as Standing[]);
+        break;
+      default:
     }
   }
 
   useEffect(() => {
-    setData(getLocalStorage());
+    setData(getLocalStorage<Tournament>('@TOOnline:tournament'));
 
     window.addEventListener('storage', onStorageUpdate);
 
     return () => {
       window.removeEventListener('storage', onStorageUpdate);
     };
-  }, []);
+  }, [data]);
+
+  useEffect(() => {
+    setStandings(getLocalStorage<Standing[]>('@TOOnline:tournament'));
+
+    window.addEventListener('storage', onStorageUpdate);
+
+    return () => {
+      window.removeEventListener('storage', onStorageUpdate);
+    };
+  }, [standings]);
 
   const provider = useMemo(
     () => ({
       setTournament,
+      standings,
+      addStanding,
+      editStandings,
+      removeStanding,
       tournament: data,
     }),
     [data, setTournament],
