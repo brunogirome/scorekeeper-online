@@ -1,4 +1,5 @@
 import { ChangeEvent, FormEvent, useCallback, useState } from 'react';
+import { MdSave, MdDelete, MdModeEditOutline } from 'react-icons/md';
 
 import {
   Container,
@@ -9,13 +10,14 @@ import {
 } from './styles';
 
 import { useTimer } from '../../Hooks/timerContext';
-import { useTournament } from '../../Hooks/tournamentContext';
+import { Player } from '../../Hooks/playerContext';
+import { useTournament, Standing } from '../../Hooks/tournamentContext';
 import { Timer } from '../../components/Timer/index';
 
 export function Dashboard() {
   const { playPause, setRoundTime, roundTime } = useTimer();
 
-  const { tournament, setTournament } = useTournament();
+  const { tournament, setTournament, standings } = useTournament();
 
   const [tournamentNameLocal, setTournamentName] = useState<string>(
     tournament.tournamentName,
@@ -28,6 +30,8 @@ export function Dashboard() {
   const [roundTimeValue, setRoundTimeValue] = useState<string>(
     roundTime.toString(),
   );
+
+  const [localStandings, setLocalStandings] = useState<Standing[]>(standings);
 
   const handleTournamentName = useCallback(
     (e: FormEvent) => {
@@ -62,6 +66,26 @@ export function Dashboard() {
     },
     [roundTimeValue],
   );
+
+  const handleAddEmptyStanding = useCallback(() => {
+    const newLocalStandings = localStandings;
+
+    newLocalStandings.push({
+      round: 1,
+      table: localStandings.length + 1,
+      player1: {} as Player,
+      player2: {} as Player,
+      scorePlayer1: 0,
+      scorePlayer2: 0,
+      scoreTournamentPlayer1: '1-2-3',
+      scoreTournamentPlayer2: '4-5-6',
+      timeExtension: 0,
+    });
+
+    setLocalStandings([...newLocalStandings]);
+
+    console.log(JSON.stringify([...localStandings]));
+  }, [localStandings]);
 
   const handleRoundTimeChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -210,51 +234,64 @@ export function Dashboard() {
                 <th>Player2</th>
                 <th>Tempo Extra</th>
                 <th className="last-row">
-                  <button type="button">Adicionar</button>
+                  <button type="button" onClick={handleAddEmptyStanding}>
+                    Adicionar
+                  </button>
                 </th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td className="table-number">
-                  <span>1</span>
-                </td>
-                <td className="player-info">
-                  <div>
-                    <p className="player-name">
-                      <input type="text" placeholder="nome do jogador" />
-                    </p>
-                    <p>
-                      <span>Deck</span>
-                      <input type="text" placeholder="Deck utilizado" />
-                    </p>
-                  </div>
-                </td>
-                <td className="player-score">
-                  <input type="text" placeholder="0" />
-                </td>
-                <td className="vs-row">
-                  <span>VS.</span>
-                </td>
-                <td className="player-score">
-                  <input type="number" placeholder="0" />
-                </td>
-                <td className="player-info">
-                  <div>
-                    <p className="player-name">
-                      <input type="text" placeholder="nome do jogador" />
-                    </p>
-                    <p>
-                      <span>Deck</span>
-                      <input type="text" placeholder="Deck utilizado" />
-                    </p>
-                  </div>
-                </td>
-                <td className="extra-info">
-                  <input type="number" placeholder="Tempo em minutos" />
-                </td>
-                <td> </td>
-              </tr>
+              {localStandings.map(localStanding => (
+                <tr key={localStanding.table}>
+                  <td className="table-number">
+                    <span>{localStanding.table}</span>
+                  </td>
+                  <td className="player-info">
+                    <div>
+                      <p className="player-name">
+                        <input type="text" placeholder="nome do jogador" />
+                      </p>
+                      <p>
+                        <span>Deck</span>
+                        <input type="text" placeholder="Deck utilizado" />
+                      </p>
+                    </div>
+                  </td>
+                  <td className="player-score">
+                    <input type="text" placeholder="0" />
+                  </td>
+                  <td className="vs-row">
+                    <span>VS.</span>
+                  </td>
+                  <td className="player-score">
+                    <input type="number" placeholder="0" />
+                  </td>
+                  <td className="player-info">
+                    <div>
+                      <p className="player-name">
+                        <input type="text" placeholder="nome do jogador" />
+                      </p>
+                      <p>
+                        <span>Deck</span>
+                        <input type="text" placeholder="Deck utilizado" />
+                      </p>
+                    </div>
+                  </td>
+                  <td className="extra-info">
+                    <input type="number" placeholder="Tempo em minutos" />
+                    <button type="button">
+                      <MdModeEditOutline />
+                    </button>
+                    <button type="button">
+                      <MdSave />
+                    </button>
+                    <button type="button">
+                      <MdDelete />
+                    </button>
+                  </td>
+                  <td> </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </TournamentBracket>

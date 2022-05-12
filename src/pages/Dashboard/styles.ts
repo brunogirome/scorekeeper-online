@@ -501,6 +501,20 @@ export const TournamentBracket = styled.div`
         }
 
         .extra-info {
+          display: flex;
+          align-items: center;
+
+          input,
+          button {
+            margin-left: 5px;
+            width: 25px;
+            height: 25px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+
           input {
             width: 85px;
             height: 20px;

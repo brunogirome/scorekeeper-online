@@ -10,7 +10,7 @@ import {
 import { Player } from './playerContext';
 import { getLocalStorage } from '../utils/getLocalStorage';
 
-interface Standing {
+export interface Standing {
   round: number;
   table: number;
   player1: Player;
@@ -148,17 +148,17 @@ export function TournamentProvider({ children }: Props) {
     return () => {
       window.removeEventListener('storage', onStorageUpdate);
     };
-  }, [data]);
+  }, []);
 
   useEffect(() => {
-    setStandings(getLocalStorage<Standing[]>('@TOOnline:tournament'));
+    setStandings(getLocalStorage<Standing[]>('@TOOnline:tournament:standings'));
 
     window.addEventListener('storage', onStorageUpdate);
 
     return () => {
       window.removeEventListener('storage', onStorageUpdate);
     };
-  }, [standings]);
+  }, []);
 
   const provider = useMemo(
     () => ({
