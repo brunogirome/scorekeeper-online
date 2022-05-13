@@ -13,12 +13,12 @@ export interface Player {
   wins: number;
   draws: number;
   looses: number;
-  current_deck: string;
+  currentDeck: string;
 }
 
 interface PlayerContextData {
   players: Player[];
-  getPlayer(id: string): Player | null;
+  getPlayer(id: string): Player;
   addPlayer({ player }: { player: Player }): void;
   editPlayer({ player }: { player: Player }): void;
   removePlayer(id: string): void | null;
@@ -42,10 +42,6 @@ export function PlayerProvider({ children }: Props) {
   const getPlayer = useCallback(
     (id: string) => {
       const findPlayer = data.filter(player => player.id === id)[0];
-
-      if (!findPlayer) {
-        return null;
-      }
 
       return findPlayer;
     },
