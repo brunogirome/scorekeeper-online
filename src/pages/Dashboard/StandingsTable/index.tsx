@@ -15,7 +15,9 @@ export function StandingsTable({
 }: StandingsTableProps) {
   const { standings } = useTournament();
 
-  const [localStandings, setLocalStandings] = useState<Standing[]>(standings);
+  const [localStandings, setLocalStandings] = useState<Standing[]>(
+    standings || [],
+  );
 
   const handleAddEmptyStanding = useCallback(() => {
     const newLocalStandings = localStandings;

@@ -58,11 +58,14 @@ const TournamentContext = createContext<TournamentContextData>(
 
 export function TournamentProvider({ children }: Props) {
   const [data, setData] = useState<Tournament>(() =>
-    getLocalStorage<Tournament>('@TOOnline:tournament'),
+    getLocalStorage<Tournament>({ storage: '@TOOnline:tournament' }),
   );
 
   const [standings, setStandings] = useState<Standing[]>(() =>
-    getLocalStorage<Standing[]>('@TOOnline:tournament:standings'),
+    getLocalStorage<Standing[]>({
+      storage: '@TOOnline:tournament:standings',
+      array: true,
+    }),
   );
 
   const setTournament = useCallback(
@@ -141,7 +144,12 @@ export function TournamentProvider({ children }: Props) {
   }
 
   useEffect(() => {
-    setData(getLocalStorage<Tournament>('@TOOnline:tournament'));
+    setData(
+      getLocalStorage<Tournament>({
+        storage: '@TOOnline:tournament',
+        array: true,
+      }),
+    );
 
     window.addEventListener('storage', onStorageUpdate);
 
@@ -151,7 +159,12 @@ export function TournamentProvider({ children }: Props) {
   }, []);
 
   useEffect(() => {
-    setStandings(getLocalStorage<Standing[]>('@TOOnline:tournament:standings'));
+    setStandings(
+      getLocalStorage<Standing[]>({
+        storage: '@TOOnline:tournament:standings',
+        array: true,
+      }),
+    );
 
     window.addEventListener('storage', onStorageUpdate);
 
