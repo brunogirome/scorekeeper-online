@@ -1,12 +1,30 @@
+import { useState, useCallback } from 'react';
+
+import Modal from 'react-modal';
+
 import { Container, PlayerTable } from './styles';
 
 import { TimerCard } from './TimerCard';
 import { TournamentInfoCard } from './TournamentInfoCard';
 import { StandingsTable } from './StandingsTable/index';
 
+import { StandingModal } from '../../components/StandingModal';
+
+Modal.setAppElement('#root');
+
 export function Dashboard() {
+  const [isStandingsModalOpen, setIsStandingModalOpen] = useState(false);
+
+  const handleOpenStandingsModal = useCallback(() => {
+    setIsStandingModalOpen(true);
+  }, []);
+
   return (
     <Container>
+      <StandingModal
+        isOpen={isStandingsModalOpen}
+        setIsStandingModalOpen={setIsStandingModalOpen}
+      />
       <section>
         <TimerCard />
         <PlayerTable>
@@ -34,7 +52,7 @@ export function Dashboard() {
       <section>
         <TournamentInfoCard />
         <h2>Organização das mesas</h2>
-        <StandingsTable />
+        <StandingsTable handleOpenStandingsModal={handleOpenStandingsModal} />
       </section>
     </Container>
   );

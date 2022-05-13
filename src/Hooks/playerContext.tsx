@@ -9,6 +9,7 @@ import {
 export interface Player {
   id: string;
   name: string;
+  currentTable: number;
   wins: number;
   draws: number;
   looses: number;
@@ -31,7 +32,8 @@ const PlayerContext = createContext<PlayerContextData>({} as PlayerContextData);
 
 export function PlayerProvider({ children }: Props) {
   const getLocalStorage = useCallback(
-    () => JSON.parse('@TOOnline:players' || ([] as Player[])),
+    () =>
+      JSON.parse(localStorage.getItem('@TOOnline:players') || '[]') as Player[],
     [],
   );
 

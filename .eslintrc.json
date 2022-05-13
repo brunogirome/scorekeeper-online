@@ -22,8 +22,6 @@
   "rules": {
     "space-before-function-paren": "off",
     "import/prefer-default-export": "off",
-    "react/prop-types": "off",
-    "react/function-component-definition": "off",
     "react/jsx-filename-extension": [
       2,
       { "extensions": [".js", ".jsx", ".ts", ".tsx"] }

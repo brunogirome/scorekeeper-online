@@ -6,7 +6,13 @@ import { useTournament, Standing } from '../../../Hooks/tournamentContext';
 
 import { Container } from './styles';
 
-export function StandingsTable() {
+interface StandingsTableProps {
+  handleOpenStandingsModal(): void;
+}
+
+export function StandingsTable({
+  handleOpenStandingsModal,
+}: StandingsTableProps) {
   const { standings } = useTournament();
 
   const [localStandings, setLocalStandings] = useState<Standing[]>(standings);
@@ -25,6 +31,8 @@ export function StandingsTable() {
       scoreTournamentPlayer2: '4-5-6',
       timeExtension: 0,
     });
+
+    handleOpenStandingsModal();
 
     setLocalStandings([...newLocalStandings]);
   }, [localStandings]);
