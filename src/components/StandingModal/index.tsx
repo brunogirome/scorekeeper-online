@@ -1,7 +1,7 @@
-import { useCallback, FormEvent, useState } from 'react';
+import { useCallback, FormEvent, useState, ChangeEvent } from 'react';
 import Modal from 'react-modal';
 
-import { usePlayer } from '../../Hooks/playerContext';
+import { usePlayer, Player } from '../../Hooks/playerContext';
 import { useTournament } from '../../Hooks/tournamentContext';
 
 import {
@@ -17,79 +17,66 @@ interface StandingModalProps {
   setIsStandingModalOpen: (isOpen: boolean) => void;
 }
 
-interface AvailablePlayer {
-  key: string;
+interface AvailablePlayer extends Player {
   isPlayer1: boolean;
   isPlayer2: boolean;
-  name: string;
-  currentDeck: string;
 }
 
-interface SelectedPlayer {
-  id: string;
-  name: string;
-  deck: string;
-}
+const EMPTY_PLAYER = {
+  id: '',
+  name: '',
+  currentDeck: '',
+  wins: 0,
+  draws: 0,
+  looses: 0,
+  currentTable: 0,
+};
 
 export function StandingModal({
   isOpen,
   setIsStandingModalOpen,
 }: StandingModalProps) {
   const { standings, addStanding } = useTournament();
-  const { players, getPlayer, editPlayer } = usePlayer();
+  const { players, editPlayer } = usePlayer();
 
-  const [availablePlayers, setAvailablePlayers] = useState<AvailablePlayer[]>(
+  const currentTable = standings.length + 1;
+
+  const getAvailablePlayers = useCallback(
     () =>
       players
         .filter(player => player.currentTable === 0)
-        .map(({ id, name, currentDeck }) => ({
-          key: id,
+        .map(player => ({
+          ...player,
           isPlayer1: false,
           isPlayer2: false,
-          name,
-          currentDeck,
         })),
+    [players],
   );
 
-  const [selectedPlayer1, setSelectedPlayer1] = useState<SelectedPlayer>({
-    id: '',
-    name: '',
-    deck: '',
-  } as SelectedPlayer);
+  const [availablePlayers, setAvailablePlayers] =
+    useState<AvailablePlayer[]>(getAvailablePlayers);
 
-  const [selectedPlayer2, setSelectedPlayer2] = useState<SelectedPlayer>({
-    id: '',
-    name: '',
-    deck: '',
-  } as SelectedPlayer);
+  const [selectedPlayer1, setSelectedPlayer1] = useState<Player>(EMPTY_PLAYER);
 
-  const [victorysPlayer1, setVictorysPlayer1] = useState(0);
-
-  const [drawsPlayer1, setDrawsPlayer1] = useState(0);
-
-  const [loosesPlayer1, setLoosesPlayer1] = useState(0);
-
-  const [victorysPlayer2, setVictorysPlayer2] = useState(0);
-
-  const [drawsPlayer2, setDrawsPlayer2] = useState(0);
-
-  const [loosesPlayer2, setLoosesPlayer2] = useState(0);
+  const [selectedPlayer2, setSelectedPlayer2] = useState<Player>(EMPTY_PLAYER);
 
   const handleSelectPlayer = useCallback(
     ({
-      key,
+      player,
       playerNumber,
-      deck,
     }: {
-      key: string;
+      player: AvailablePlayer;
       playerNumber: 1 | 2;
-      deck: string;
     }) => {
-      const playerIndex = players.findIndex(player => player.id === key);
+      const playerIndex = players.findIndex(
+        findPlayer => findPlayer.id === player.id,
+      );
 
       let newAvailablePlayers = availablePlayers;
 
-      const { isPlayer1, isPlayer2, name } = availablePlayers[playerIndex];
+      const { isPlayer1, isPlayer2 } = availablePlayers[playerIndex];
+
+      const newPlayer = { ...player, currentTable };
 
       if (
         (isPlayer1 && playerNumber === 1) ||
@@ -98,26 +85,26 @@ export function StandingModal({
         return;
       }
 
-      newAvailablePlayers = newAvailablePlayers.map(player => {
-        const newPlayer = player;
+      newAvailablePlayers = newAvailablePlayers.map(availablePlayer => {
+        const newAvailablePlayer = availablePlayer;
 
-        if (playerNumber === 1 && player.isPlayer1) {
-          newPlayer.isPlayer1 = false;
-          return { ...newPlayer };
+        if (playerNumber === 1 && availablePlayer.isPlayer1) {
+          newAvailablePlayer.isPlayer1 = false;
+          return newAvailablePlayer;
         }
 
-        if (playerNumber === 2 && player.isPlayer2) {
-          newPlayer.isPlayer2 = false;
-          return { ...newPlayer };
+        if (playerNumber === 2 && availablePlayer.isPlayer2) {
+          newAvailablePlayer.isPlayer2 = false;
+          return newAvailablePlayer;
         }
 
-        return player;
+        return availablePlayer;
       });
 
       if (playerNumber === 1) {
-        setSelectedPlayer1({ id: key, name, deck });
+        setSelectedPlayer1(newPlayer);
       } else {
-        setSelectedPlayer2({ id: key, name, deck });
+        setSelectedPlayer2(newPlayer);
       }
 
       if (isPlayer2 && playerNumber === 1) {
@@ -125,7 +112,8 @@ export function StandingModal({
         newAvailablePlayers[playerIndex].isPlayer2 = false;
         setAvailablePlayers([...newAvailablePlayers]);
 
-        setSelectedPlayer2({ id: '', name: '', deck: '' });
+        setSelectedPlayer2(EMPTY_PLAYER);
+
         return;
       }
 
@@ -134,7 +122,7 @@ export function StandingModal({
         newAvailablePlayers[playerIndex].isPlayer2 = true;
         setAvailablePlayers([...newAvailablePlayers]);
 
-        setSelectedPlayer1({ id: '', name: '', deck: '' });
+        setSelectedPlayer1(EMPTY_PLAYER);
         return;
       }
 
@@ -146,40 +134,30 @@ export function StandingModal({
 
       setAvailablePlayers([...newAvailablePlayers]);
     },
-    [players, availablePlayers],
+    [players, availablePlayers, currentTable],
   );
 
   const handleCloseNewTransactionModal = useCallback(() => {
     setIsStandingModalOpen(false);
-  }, [selectedPlayer1]);
+  }, [setIsStandingModalOpen]);
 
   const handleSubmit = useCallback(
     (e: FormEvent) => {
       e.preventDefault();
 
-      console.log(selectedPlayer1);
+      editPlayer({ player: selectedPlayer1 });
 
-      const player1 = getPlayer(selectedPlayer1.id);
+      editPlayer({ player: selectedPlayer2 });
 
-      const player2 = getPlayer(selectedPlayer2.id);
-
-      player1.currentDeck = selectedPlayer1.deck;
-
-      player2.currentDeck = selectedPlayer2.deck;
-
-      editPlayer({ player: player1 });
-
-      editPlayer({ player: player2 });
-
-      const newStanding = {
+      const standing = {
         round: 0,
-        player1,
-        player2,
+        selectedPlayer1,
+        selectedPlayer2,
         scorePlayer1: 0,
         scorePlayer2: 0,
-        scoreTournamentPlayer1: `V${victorysPlayer1} - E${drawsPlayer1} - D${loosesPlayer1}`,
-        scoreTournamentPlayer2: `V${victorysPlayer2} - E${drawsPlayer2} - D${loosesPlayer2}`,
-        table: standings.length + 1,
+        scoreTournamentPlayer1: `V${selectedPlayer1.wins} - E${selectedPlayer1.draws} - D${selectedPlayer1.looses}`,
+        scoreTournamentPlayer2: `V${selectedPlayer2.wins} - E${selectedPlayer2.draws} - D${selectedPlayer2.looses}`,
+        table: currentTable,
         timeExtension: 0,
       };
 
@@ -187,7 +165,26 @@ export function StandingModal({
       //   standing: newStanding,
       // });
 
-      console.log(newStanding);
+      console.log(standing);
+    },
+    [selectedPlayer1, selectedPlayer2, editPlayer, currentTable],
+  );
+
+  const handleChangeScore = useCallback(
+    (
+      e: ChangeEvent<HTMLInputElement>,
+      value: 'wins' | 'draws' | 'looses',
+      playerNumber: 1 | 2,
+    ) => {
+      if (playerNumber === 1) {
+        const newSelectedPlayer = selectedPlayer1;
+        newSelectedPlayer[value] = Number.parseInt(e.target.value, 10);
+        setSelectedPlayer1({ ...newSelectedPlayer });
+      } else {
+        const newSelectedPlayer = selectedPlayer2;
+        newSelectedPlayer[value] = Number.parseInt(e.target.value, 10);
+        setSelectedPlayer2({ ...newSelectedPlayer });
+      }
     },
     [selectedPlayer1, selectedPlayer2],
   );
@@ -200,7 +197,7 @@ export function StandingModal({
       className="react-modal-content"
     >
       <Container onSubmit={handleSubmit}>
-        <h1>Criação da mesa {standings.length + 1}</h1>
+        <h1>Criação da mesa {currentTable}</h1>
 
         <h2>Jogadores</h2>
         <PlayerSelector>
@@ -214,16 +211,15 @@ export function StandingModal({
             </thead>
             <tbody>
               {availablePlayers.map(player => (
-                <tr key={player.key}>
+                <tr key={player.id}>
                   <td>
                     <input
                       type="checkbox"
                       checked={player.isPlayer1}
                       onChange={() =>
                         handleSelectPlayer({
-                          key: player.key,
+                          player,
                           playerNumber: 1,
-                          deck: player.currentDeck,
                         })
                       }
                     />
@@ -234,9 +230,8 @@ export function StandingModal({
                       checked={player.isPlayer2}
                       onChange={() =>
                         handleSelectPlayer({
-                          key: player.key,
+                          player,
                           playerNumber: 2,
-                          deck: player.currentDeck,
                         })
                       }
                     />
@@ -269,9 +264,12 @@ export function StandingModal({
             <input
               type="text"
               placeholder="Nome do deck"
-              value={selectedPlayer1.deck}
+              value={selectedPlayer1.currentDeck}
               onChange={e =>
-                setSelectedPlayer1({ ...selectedPlayer1, deck: e.target.value })
+                setSelectedPlayer1({
+                  ...selectedPlayer1,
+                  currentDeck: e.target.value,
+                })
               }
             />
           </div>
@@ -280,9 +278,12 @@ export function StandingModal({
             <input
               type="text"
               placeholder="Nome do deck"
-              value={selectedPlayer2.deck}
+              value={selectedPlayer2.currentDeck}
               onChange={e =>
-                setSelectedPlayer2({ ...selectedPlayer2, deck: e.target.value })
+                setSelectedPlayer2({
+                  ...selectedPlayer2,
+                  currentDeck: e.target.value,
+                })
               }
             />
           </div>
@@ -297,10 +298,8 @@ export function StandingModal({
                 <input
                   type="number"
                   placeholder="0"
-                  onChange={e =>
-                    setVictorysPlayer1(Number.parseInt(e.target.value, 10))
-                  }
-                  value={victorysPlayer1}
+                  onChange={e => handleChangeScore(e, 'wins', 1)}
+                  value={selectedPlayer1.wins}
                 />
               </div>
               <div>
@@ -308,10 +307,8 @@ export function StandingModal({
                 <input
                   type="number"
                   placeholder="0"
-                  onChange={e =>
-                    setDrawsPlayer1(Number.parseInt(e.target.value, 10))
-                  }
-                  value={drawsPlayer1}
+                  onChange={e => handleChangeScore(e, 'draws', 1)}
+                  value={selectedPlayer1.draws}
                 />
               </div>
               <div>
@@ -319,10 +316,8 @@ export function StandingModal({
                 <input
                   type="number"
                   placeholder="0"
-                  onChange={e =>
-                    setLoosesPlayer1(Number.parseInt(e.target.value, 10))
-                  }
-                  value={loosesPlayer1}
+                  onChange={e => handleChangeScore(e, 'looses', 1)}
+                  value={selectedPlayer1.looses}
                 />
               </div>
             </div>
@@ -335,10 +330,8 @@ export function StandingModal({
                 <input
                   type="number"
                   placeholder="0"
-                  onChange={e =>
-                    setVictorysPlayer2(Number.parseInt(e.target.value, 10))
-                  }
-                  value={victorysPlayer2}
+                  onChange={e => handleChangeScore(e, 'wins', 2)}
+                  value={selectedPlayer2.wins}
                 />
               </div>
               <div>
@@ -346,10 +339,8 @@ export function StandingModal({
                 <input
                   type="number"
                   placeholder="0"
-                  onChange={e =>
-                    setDrawsPlayer2(Number.parseInt(e.target.value, 10))
-                  }
-                  value={drawsPlayer2}
+                  onChange={e => handleChangeScore(e, 'draws', 2)}
+                  value={selectedPlayer2.draws}
                 />
               </div>
               <div>
@@ -357,10 +348,8 @@ export function StandingModal({
                 <input
                   type="number"
                   placeholder="0"
-                  onChange={e =>
-                    setLoosesPlayer2(Number.parseInt(e.target.value, 10))
-                  }
-                  value={loosesPlayer2}
+                  onChange={e => handleChangeScore(e, 'looses', 2)}
+                  value={selectedPlayer2.looses}
                 />
               </div>
             </div>
