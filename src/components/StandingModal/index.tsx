@@ -75,7 +75,7 @@ export function StandingModal({
       player: AvailablePlayer;
       playerNumber: 1 | 2;
     }) => {
-      const playerIndex = players.findIndex(
+      const playerIndex = availablePlayers.findIndex(
         findPlayer => findPlayer.id === player.id,
       );
 
@@ -141,7 +141,7 @@ export function StandingModal({
 
       setAvailablePlayers([...newAvailablePlayers]);
     },
-    [players, availablePlayers, currentTable],
+    [availablePlayers, currentTable],
   );
 
   const handleCloseNewStandingsModal = useCallback(() => {
@@ -193,7 +193,7 @@ export function StandingModal({
   );
 
   useEffect(() => {
-    setAvailablePlayers(getAvailablePlayers());
+    setAvailablePlayers([...getAvailablePlayers()]);
   }, [players, setAvailablePlayers, getAvailablePlayers]);
 
   return (

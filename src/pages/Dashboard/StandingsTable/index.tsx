@@ -1,6 +1,6 @@
 import { MdSave, MdDelete, MdModeEditOutline } from 'react-icons/md';
 
-import { useTournament, Standing } from '../../../Hooks/tournamentContext';
+import { useTournament } from '../../../Hooks/tournamentContext';
 
 import { Container } from './styles';
 
@@ -45,6 +45,7 @@ export function StandingsTable({
                       type="text"
                       placeholder="Nome do jogador"
                       value={standing.player1.name}
+                      readOnly
                     />
                   </p>
                   <p>
@@ -53,6 +54,7 @@ export function StandingsTable({
                       type="text"
                       placeholder="Deck utilizado"
                       value={standing.player1.currentDeck}
+                      readOnly
                     />
                   </p>
                 </div>
@@ -62,6 +64,7 @@ export function StandingsTable({
                   type="text"
                   placeholder="0"
                   value={standing.scorePlayer1}
+                  readOnly
                 />
               </td>
               <td className="vs-row">
@@ -72,6 +75,7 @@ export function StandingsTable({
                   type="number"
                   placeholder="0"
                   value={standing.scorePlayer2}
+                  readOnly
                 />
               </td>
               <td className="player-info">
@@ -81,6 +85,7 @@ export function StandingsTable({
                       type="text"
                       placeholder="Nome do jogador"
                       value={standing.player2.name}
+                      readOnly
                     />
                   </p>
                   <p>
@@ -89,6 +94,7 @@ export function StandingsTable({
                       type="text"
                       placeholder="Deck utilizado"
                       value={standing.player2.currentDeck}
+                      readOnly
                     />
                   </p>
                 </div>
@@ -98,6 +104,7 @@ export function StandingsTable({
                   type="number"
                   placeholder="Tempo em minutos"
                   value={standing.timeExtension}
+                  readOnly
                 />
                 <button type="button">
                   <MdModeEditOutline />
