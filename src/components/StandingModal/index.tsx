@@ -1,4 +1,10 @@
-import { useCallback, FormEvent, useState, ChangeEvent } from 'react';
+import {
+  useCallback,
+  FormEvent,
+  useState,
+  ChangeEvent,
+  useEffect,
+} from 'react';
 import Modal from 'react-modal';
 
 import { usePlayer, Player } from '../../Hooks/playerContext';
@@ -14,7 +20,7 @@ import {
 
 interface StandingModalProps {
   isOpen: boolean;
-  setIsStandingModalOpen: (isOpen: boolean) => void;
+  setIsStandingsModalOpen: (isOpen: boolean) => void;
 }
 
 interface AvailablePlayer extends Player {
@@ -34,7 +40,7 @@ const EMPTY_PLAYER = {
 
 export function StandingModal({
   isOpen,
-  setIsStandingModalOpen,
+  setIsStandingsModalOpen,
 }: StandingModalProps) {
   const { standings, addStanding } = useTournament();
   const { players, editPlayer } = usePlayer();
@@ -53,8 +59,9 @@ export function StandingModal({
     [players],
   );
 
-  const [availablePlayers, setAvailablePlayers] =
-    useState<AvailablePlayer[]>(getAvailablePlayers);
+  const [availablePlayers, setAvailablePlayers] = useState(
+    [] as AvailablePlayer[],
+  );
 
   const [selectedPlayer1, setSelectedPlayer1] = useState<Player>(EMPTY_PLAYER);
 
@@ -76,7 +83,7 @@ export function StandingModal({
 
       const { isPlayer1, isPlayer2 } = availablePlayers[playerIndex];
 
-      const newPlayer = { ...player, currentTable };
+      const selectedPlayer = { ...player, currentTable };
 
       if (
         (isPlayer1 && playerNumber === 1) ||
@@ -102,9 +109,9 @@ export function StandingModal({
       });
 
       if (playerNumber === 1) {
-        setSelectedPlayer1(newPlayer);
+        setSelectedPlayer1(selectedPlayer);
       } else {
-        setSelectedPlayer2(newPlayer);
+        setSelectedPlayer2(selectedPlayer);
       }
 
       if (isPlayer2 && playerNumber === 1) {
@@ -137,9 +144,9 @@ export function StandingModal({
     [players, availablePlayers, currentTable],
   );
 
-  const handleCloseNewTransactionModal = useCallback(() => {
-    setIsStandingModalOpen(false);
-  }, [setIsStandingModalOpen]);
+  const handleCloseNewStandingsModal = useCallback(() => {
+    setIsStandingsModalOpen(false);
+  }, [setIsStandingsModalOpen]);
 
   const handleSubmit = useCallback(
     (e: FormEvent) => {
@@ -189,10 +196,19 @@ export function StandingModal({
     [selectedPlayer1, selectedPlayer2],
   );
 
+  useEffect(() => {
+    setAvailablePlayers(getAvailablePlayers());
+  }, [players, setAvailablePlayers, getAvailablePlayers]);
+
+  useEffect(() => {
+    console.log('sus');
+    return console.log('sus');
+  }, []);
+
   return (
     <Modal
       isOpen={isOpen}
-      onRequestClose={handleCloseNewTransactionModal}
+      onRequestClose={handleCloseNewStandingsModal}
       overlayClassName="react-modal-overlay"
       className="react-modal-content"
     >
@@ -356,7 +372,9 @@ export function StandingModal({
           </div>
         </PlayersScores>
         <ButtonContainer>
-          <button type="submit">Cancelar</button>
+          <button onClick={handleCloseNewStandingsModal} type="button">
+            Cancelar
+          </button>
           <button type="submit">Adicionar</button>
         </ButtonContainer>
       </Container>

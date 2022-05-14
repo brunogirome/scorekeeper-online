@@ -55,7 +55,7 @@ export function PlayerProvider({ children }: Props) {
       newData.push(player);
 
       localStorage.setItem('@TOOnline:players', JSON.stringify(newData));
-      setData(newData);
+      setData([...newData]);
     },
     [data],
   );
@@ -69,7 +69,7 @@ export function PlayerProvider({ children }: Props) {
       newData[index] = player;
 
       localStorage.setItem('@TOOnline:players', JSON.stringify(newData));
-      setData(newData);
+      setData([...newData]);
     },
     [data],
   );
@@ -83,7 +83,7 @@ export function PlayerProvider({ children }: Props) {
       newData.splice(index, 1);
 
       localStorage.setItem('@TOOnline:players', JSON.stringify(newData));
-      setData(newData);
+      setData([...newData]);
     },
     [data],
   );
@@ -96,7 +96,7 @@ export function PlayerProvider({ children }: Props) {
       editPlayer,
       removePlayer,
     }),
-    [],
+    [addPlayer, data, editPlayer, getPlayer, removePlayer],
   );
 
   return (
