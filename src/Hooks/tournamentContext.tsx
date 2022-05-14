@@ -101,7 +101,7 @@ export function TournamentProvider({ children }: Props) {
         '@TOOnline:tournament:standings',
         JSON.stringify(newStandings),
       );
-      setStandings({ ...newStandings });
+      setStandings([...newStandings]);
     },
     [standings],
   );
@@ -182,7 +182,14 @@ export function TournamentProvider({ children }: Props) {
       removeStanding,
       tournament: data,
     }),
-    [data, setTournament],
+    [
+      data,
+      setTournament,
+      addStanding,
+      editStandings,
+      removeStanding,
+      standings,
+    ],
   );
 
   return (

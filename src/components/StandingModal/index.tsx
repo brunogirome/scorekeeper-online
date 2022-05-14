@@ -158,23 +158,19 @@ export function StandingModal({
 
       const standing = {
         round: 0,
-        selectedPlayer1,
-        selectedPlayer2,
+        table: currentTable,
+        player1: selectedPlayer1,
+        player2: selectedPlayer2,
         scorePlayer1: 0,
         scorePlayer2: 0,
         scoreTournamentPlayer1: `V${selectedPlayer1.wins} - E${selectedPlayer1.draws} - D${selectedPlayer1.looses}`,
         scoreTournamentPlayer2: `V${selectedPlayer2.wins} - E${selectedPlayer2.draws} - D${selectedPlayer2.looses}`,
-        table: currentTable,
         timeExtension: 0,
       };
 
-      // addStanding({
-      //   standing: newStanding,
-      // });
-
-      console.log(standing);
+      addStanding({ standing });
     },
-    [selectedPlayer1, selectedPlayer2, editPlayer, currentTable],
+    [selectedPlayer1, selectedPlayer2, editPlayer, currentTable, addStanding],
   );
 
   const handleChangeScore = useCallback(
@@ -199,11 +195,6 @@ export function StandingModal({
   useEffect(() => {
     setAvailablePlayers(getAvailablePlayers());
   }, [players, setAvailablePlayers, getAvailablePlayers]);
-
-  useEffect(() => {
-    console.log('sus');
-    return console.log('sus');
-  }, []);
 
   return (
     <Modal

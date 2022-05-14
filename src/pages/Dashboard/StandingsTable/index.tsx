@@ -1,7 +1,5 @@
-import { useState, useCallback } from 'react';
 import { MdSave, MdDelete, MdModeEditOutline } from 'react-icons/md';
 
-import { Player } from '../../../Hooks/playerContext';
 import { useTournament, Standing } from '../../../Hooks/tournamentContext';
 
 import { Container } from './styles';
@@ -14,30 +12,6 @@ export function StandingsTable({
   handleOpenStandingsModal,
 }: StandingsTableProps) {
   const { standings } = useTournament();
-
-  const [localStandings, setLocalStandings] = useState<Standing[]>(
-    standings || [],
-  );
-
-  const handleAddEmptyStanding = useCallback(() => {
-    const newLocalStandings = localStandings;
-
-    newLocalStandings.push({
-      round: 1,
-      table: localStandings.length + 1,
-      player1: {} as Player,
-      player2: {} as Player,
-      scorePlayer1: 0,
-      scorePlayer2: 0,
-      scoreTournamentPlayer1: '1-2-3',
-      scoreTournamentPlayer2: '4-5-6',
-      timeExtension: 0,
-    });
-
-    handleOpenStandingsModal();
-
-    setLocalStandings([...newLocalStandings]);
-  }, [localStandings]);
 
   return (
     <Container>
@@ -52,51 +26,79 @@ export function StandingsTable({
             <th>Player2</th>
             <th>Tempo Extra</th>
             <th className="last-row">
-              <button type="button" onClick={handleAddEmptyStanding}>
+              <button type="button" onClick={handleOpenStandingsModal}>
                 Adicionar
               </button>
             </th>
           </tr>
         </thead>
         <tbody>
-          {localStandings.map(localStanding => (
-            <tr key={localStanding.table}>
+          {standings.map(standing => (
+            <tr key={standing.table}>
               <td className="table-number">
-                <span>{localStanding.table}</span>
+                <span>{standing.table}</span>
               </td>
               <td className="player-info">
                 <div>
                   <p className="player-name">
-                    <input type="text" placeholder="nome do jogador" />
+                    <input
+                      type="text"
+                      placeholder="Nome do jogador"
+                      value={standing.player1.name}
+                    />
                   </p>
                   <p>
                     <span>Deck</span>
-                    <input type="text" placeholder="Deck utilizado" />
+                    <input
+                      type="text"
+                      placeholder="Deck utilizado"
+                      value={standing.player1.currentDeck}
+                    />
                   </p>
                 </div>
               </td>
               <td className="player-score">
-                <input type="text" placeholder="0" />
+                <input
+                  type="text"
+                  placeholder="0"
+                  value={standing.scorePlayer1}
+                />
               </td>
               <td className="vs-row">
                 <span>VS.</span>
               </td>
               <td className="player-score">
-                <input type="number" placeholder="0" />
+                <input
+                  type="number"
+                  placeholder="0"
+                  value={standing.scorePlayer2}
+                />
               </td>
               <td className="player-info">
                 <div>
                   <p className="player-name">
-                    <input type="text" placeholder="nome do jogador" />
+                    <input
+                      type="text"
+                      placeholder="Nome do jogador"
+                      value={standing.player2.name}
+                    />
                   </p>
                   <p>
                     <span>Deck</span>
-                    <input type="text" placeholder="Deck utilizado" />
+                    <input
+                      type="text"
+                      placeholder="Deck utilizado"
+                      value={standing.player2.currentDeck}
+                    />
                   </p>
                 </div>
               </td>
               <td className="extra-info">
-                <input type="number" placeholder="Tempo em minutos" />
+                <input
+                  type="number"
+                  placeholder="Tempo em minutos"
+                  value={standing.timeExtension}
+                />
                 <button type="button">
                   <MdModeEditOutline />
                 </button>
