@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const Container = styled.div`
+export const Container = styled.div<{ storeLogo: string }>`
   min-height: 190px;
   height: 19.9vh;
 
@@ -42,7 +42,8 @@ export const Container = styled.div`
 
     width: 180px;
     height: 180px;
-    background-color: red;
+    /* background-color: red; */
+    background-image: ${props => props.storeLogo};
   }
 `;
 

@@ -35,6 +35,8 @@ interface Tournament {
 interface TournamentContextData {
   tournament: Tournament;
   standings: Standing[];
+  storeLogo: string;
+  setStoreLogo(logo: string): void;
   setTournament({ tournament }: { tournament: Tournament }): void;
   addStanding({ standing }: { standing: Standing }): void;
   editStandings({ standing }: { standing: Standing }): void;
@@ -54,6 +56,15 @@ export function TournamentProvider({ children }: Props) {
   const [data, setData] = useState<Tournament>(() =>
     getLocalStorage<Tournament>({ storage: '@TOOnline:tournament' }),
   );
+
+  const [storeLogo, setStoreLogoLocal] = useState<string>(
+    localStorage.getItem('@TOOnline:storelogo') || '',
+  );
+
+  const setStoreLogo = useCallback((logo: string) => {
+    localStorage.setItem('@TOOnline:storelogo', logo);
+    setStoreLogoLocal(logo);
+  }, []);
 
   const [standings, setStandings] = useState<Standing[]>(() =>
     getLocalStorage<Standing[]>({
@@ -181,6 +192,8 @@ export function TournamentProvider({ children }: Props) {
       removeStanding,
       tournament: data,
       clearStandings,
+      storeLogo,
+      setStoreLogo,
     }),
     [
       data,
@@ -190,6 +203,8 @@ export function TournamentProvider({ children }: Props) {
       removeStanding,
       standings,
       clearStandings,
+      storeLogo,
+      setStoreLogo,
     ],
   );
 

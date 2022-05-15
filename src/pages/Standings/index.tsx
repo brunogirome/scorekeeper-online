@@ -26,7 +26,9 @@ export function Standings() {
               <PlayerCard side="left">
                 <PlayerText side="left">
                   <p>
-                    <span>({standing.player1.currentDeck})</span>{' '}
+                    {standing.player1.currentDeck && (
+                      <span>({standing.player1.currentDeck})</span>
+                    )}
                     {standing.player1.name}
                   </p>
                   <span>
@@ -38,15 +40,23 @@ export function Standings() {
               <Table>
                 {standing.table}
                 {standing.timeExtension > 0 && (
-                  <span>+00:{standing.timeExtension}0</span>
+                  <span>
+                    +
+                    {standing.timeExtension > 9
+                      ? standing.timeExtension
+                      : `0${standing.timeExtension}`}
+                    :00
+                  </span>
                 )}
               </Table>
               <PlayerCard side="right">
                 <Score side="right">{standing.scorePlayer2}</Score>
                 <PlayerText side="right">
                   <p>
-                    {standing.player2.name}{' '}
-                    <span>({standing.player2.currentDeck})</span>
+                    {standing.player2.name}
+                    {standing.player2.currentDeck && (
+                      <span>({standing.player2.currentDeck})</span>
+                    )}
                   </p>
                   <span>
                     {formatScoreInString({ player: standing.player1 })}

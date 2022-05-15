@@ -8,8 +8,14 @@ import { useTimer } from '../../../Hooks/timerContext';
 import { Container } from './styles';
 
 export function TournamentInfoCard() {
-  const { tournament, setTournament, standings, clearStandings } =
-    useTournament();
+  const {
+    tournament,
+    setTournament,
+    standings,
+    clearStandings,
+    storeLogo,
+    setStoreLogo,
+  } = useTournament();
   const { players, editPlayer } = usePlayer();
 
   const { resetTimer } = useTimer();
