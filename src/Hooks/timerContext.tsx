@@ -103,13 +103,13 @@ export function TimerProvider({ children }: Props) {
       );
       setRoundTimeEnd(newRoundTimeEnd);
     }
-  }, [isPlaying]);
+  }, [isPlaying, remainingTime, roundTime, roundTimeEnd]);
 
   function parseIntWithNull(value: string | null): number {
     return parseInt(value || '0', 10);
   }
 
-  function onStorageUpdate(e: StorageEvent) {
+  const onStorageUpdate = useCallback((e: StorageEvent) => {
     const { key, newValue } = e;
 
     switch (key) {
@@ -127,7 +127,7 @@ export function TimerProvider({ children }: Props) {
         break;
       default:
     }
-  }
+  }, []);
 
   useEffect(() => {
     setIsPlaying(localStorage.getItem('@TOOnline:timer:isPlaying') === 'true');
@@ -136,7 +136,7 @@ export function TimerProvider({ children }: Props) {
     return () => {
       window.removeEventListener('storage', onStorageUpdate);
     };
-  }, [isPlaying]);
+  }, [isPlaying, onStorageUpdate]);
 
   useEffect(() => {
     setRoundTimeLocal(
@@ -147,7 +147,7 @@ export function TimerProvider({ children }: Props) {
     return () => {
       window.removeEventListener('storage', onStorageUpdate);
     };
-  }, [roundTime]);
+  }, [onStorageUpdate, roundTime]);
 
   useEffect(() => {
     setRoundTimeEnd(
@@ -158,7 +158,7 @@ export function TimerProvider({ children }: Props) {
     return () => {
       window.removeEventListener('storage', onStorageUpdate);
     };
-  }, [roundTimeEnd]);
+  }, [onStorageUpdate, roundTimeEnd]);
 
   useEffect(() => {
     setRemainingTime(
@@ -169,7 +169,7 @@ export function TimerProvider({ children }: Props) {
     return () => {
       window.removeEventListener('storage', onStorageUpdate);
     };
-  }, [remainingTime]);
+  }, [onStorageUpdate, remainingTime]);
 
   const provider = useMemo(
     () => ({
@@ -180,7 +180,7 @@ export function TimerProvider({ children }: Props) {
       setRoundTime,
       playPause,
     }),
-    [roundTime, roundTimeEnd, remainingTime, isPlaying],
+    [roundTime, roundTimeEnd, remainingTime, isPlaying, playPause],
   );
 
   return (

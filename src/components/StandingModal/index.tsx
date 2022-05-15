@@ -169,8 +169,17 @@ export function StandingModal({
       };
 
       addStanding({ standing });
+
+      handleCloseNewStandingsModal();
     },
-    [selectedPlayer1, selectedPlayer2, editPlayer, currentTable, addStanding],
+    [
+      selectedPlayer1,
+      selectedPlayer2,
+      editPlayer,
+      currentTable,
+      addStanding,
+      handleCloseNewStandingsModal,
+    ],
   );
 
   const handleChangeScore = useCallback(
