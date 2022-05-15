@@ -8,7 +8,7 @@ import {
 import Modal from 'react-modal';
 
 import { usePlayer, Player } from '../../Hooks/playerContext';
-import { useTournament } from '../../Hooks/tournamentContext';
+import { useTournament, Standing } from '../../Hooks/tournamentContext';
 
 import {
   Container,
@@ -19,6 +19,7 @@ import {
 } from './styles';
 
 interface StandingModalProps {
+  editedStanding: Standing | undefined;
   isOpen: boolean;
   setIsStandingsModalOpen: (isOpen: boolean) => void;
 }
@@ -41,11 +42,14 @@ const EMPTY_PLAYER = {
 export function StandingModal({
   isOpen,
   setIsStandingsModalOpen,
+  editedStanding,
 }: StandingModalProps) {
-  const { standings, addStanding } = useTournament();
+  const { standings, addStanding, editStandings } = useTournament();
   const { players, editPlayer } = usePlayer();
 
-  const currentTable = standings.length + 1;
+  const currentTable = editedStanding
+    ? editedStanding.table
+    : standings.length + 1;
 
   const getAvailablePlayers = useCallback(
     () =>
@@ -145,12 +149,22 @@ export function StandingModal({
   );
 
   const handleCloseNewStandingsModal = useCallback(() => {
+    setAvailablePlayers([]);
+    setSelectedPlayer1(EMPTY_PLAYER);
+    setSelectedPlayer2(EMPTY_PLAYER);
+
     setIsStandingsModalOpen(false);
   }, [setIsStandingsModalOpen]);
 
   const handleSubmit = useCallback(
     (e: FormEvent) => {
       e.preventDefault();
+
+      if (!selectedPlayer1.id || !selectedPlayer2.id) {
+        // eslint-disable-next-line no-alert
+        alert('Player 1 ou 2 não foi selecionado');
+        return;
+      }
 
       editPlayer({ player: selectedPlayer1 });
 
@@ -168,17 +182,37 @@ export function StandingModal({
         timeExtension: 0,
       };
 
-      addStanding({ standing });
+      if (!editedStanding) {
+        addStanding({ standing });
+      } else {
+        editStandings({ standing });
+
+        players
+          .filter(
+            ({ currentTable: table, id }) =>
+              table === currentTable &&
+              id !== selectedPlayer1.id &&
+              id !== selectedPlayer2.id,
+          )
+          .forEach(oldSelectedPlayer => {
+            const player = { ...oldSelectedPlayer, currentTable: 0 };
+
+            editPlayer({ player });
+          });
+      }
 
       handleCloseNewStandingsModal();
     },
     [
+      addStanding,
+      currentTable,
+      editPlayer,
+      editStandings,
+      editedStanding,
+      handleCloseNewStandingsModal,
+      players,
       selectedPlayer1,
       selectedPlayer2,
-      editPlayer,
-      currentTable,
-      addStanding,
-      handleCloseNewStandingsModal,
     ],
   );
 
@@ -202,8 +236,29 @@ export function StandingModal({
   );
 
   useEffect(() => {
-    setAvailablePlayers([...getAvailablePlayers()]);
-  }, [players, setAvailablePlayers, getAvailablePlayers]);
+    if (!editedStanding) {
+      setAvailablePlayers([...getAvailablePlayers()]);
+      setSelectedPlayer1(EMPTY_PLAYER);
+      setSelectedPlayer2(EMPTY_PLAYER);
+    }
+  }, [editedStanding, getAvailablePlayers]);
+
+  useEffect(() => {
+    if (editedStanding) {
+      const { player1, player2 } = editedStanding;
+
+      setSelectedPlayer1({ ...player1 });
+      setSelectedPlayer2({ ...player2 });
+
+      const newAvailableplayers = [
+        { ...player1, isPlayer1: true, isPlayer2: false },
+        { ...player2, isPlayer1: false, isPlayer2: true },
+        ...getAvailablePlayers(),
+      ];
+
+      setAvailablePlayers(newAvailableplayers);
+    }
+  }, [editedStanding, getAvailablePlayers]);
 
   return (
     <Modal
@@ -213,7 +268,11 @@ export function StandingModal({
       className="react-modal-content"
     >
       <Container onSubmit={handleSubmit}>
-        <h1>Criação da mesa {currentTable}</h1>
+        <h1>
+          {editedStanding
+            ? `Edição da mesa ${editedStanding.table}`
+            : `Criação da mesa ${currentTable}`}
+        </h1>
 
         <h2>Jogadores</h2>
         <PlayerSelector>
@@ -375,7 +434,9 @@ export function StandingModal({
           <button onClick={handleCloseNewStandingsModal} type="button">
             Cancelar
           </button>
-          <button type="submit">Adicionar</button>
+          <button type="submit">
+            {editedStanding ? 'Salvar' : 'Adicionar'}
+          </button>
         </ButtonContainer>
       </Container>
     </Modal>

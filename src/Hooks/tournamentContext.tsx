@@ -11,7 +11,6 @@ import { Player } from './playerContext';
 import { getLocalStorage } from '../utils/getLocalStorage';
 
 export interface Standing {
-  round: number;
   table: number;
   player1: Player;
   player2: Player;
@@ -37,13 +36,7 @@ interface TournamentContextData {
   tournament: Tournament;
   standings: Standing[];
   addStanding({ standing }: { standing: Standing }): void;
-  editStandings({
-    table,
-    editedStanding,
-  }: {
-    table: number;
-    editedStanding: Standing;
-  }): void;
+  editStandings({ standing }: { standing: Standing }): void;
   removeStanding(table: number): void;
   setTournament({ tournament }: { tournament: Tournament }): void;
 }
@@ -107,24 +100,20 @@ export function TournamentProvider({ children }: Props) {
   );
 
   const editStandings = useCallback(
-    ({
-      table,
-      editedStanding,
-    }: {
-      table: number;
-      editedStanding: Standing;
-    }) => {
+    ({ standing }: { standing: Standing }) => {
       const newStandings = standings;
 
-      const index = standings.findIndex(standing => standing.table === table);
+      const index = standings.findIndex(
+        findStanding => findStanding.table === standing.table,
+      );
 
-      newStandings[index] = editedStanding;
+      newStandings[index] = standing;
 
       localStorage.setItem(
         '@TOOnline:tournament:standings',
         JSON.stringify(newStandings),
       );
-      setStandings({ ...newStandings });
+      setStandings([...newStandings]);
     },
     [standings],
   );

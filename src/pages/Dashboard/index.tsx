@@ -2,6 +2,8 @@ import { useState, useCallback } from 'react';
 
 import { Container } from './styles';
 
+import { Standing } from '../../Hooks/tournamentContext';
+
 import { TimerCard } from './TimerCard';
 import { TournamentInfoCard } from './TournamentInfoCard';
 import { StandingsTable } from './StandingsTable';
@@ -15,8 +17,13 @@ export function Dashboard() {
 
   const [isPlayersModalOpen, setIsPlayersModalOpen] = useState(false);
 
-  const handleOpenStandingsModal = useCallback(() => {
+  const [editedStanding, setEditedStanding] = useState(
+    {} as Standing | undefined,
+  );
+
+  const handleOpenStandingsModal = useCallback((standing?: Standing) => {
     setIsStandingsModalOpen(true);
+    setEditedStanding(standing);
   }, []);
 
   const handleOpenPlayersModal = useCallback(() => {
@@ -28,6 +35,7 @@ export function Dashboard() {
       <StandingModal
         isOpen={isStandingsModalOpen}
         setIsStandingsModalOpen={setIsStandingsModalOpen}
+        editedStanding={editedStanding}
       />
       <PlayerModal
         isOpen={isPlayersModalOpen}

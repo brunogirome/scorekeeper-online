@@ -6,7 +6,7 @@ import { useTournament, Standing } from '../../../Hooks/tournamentContext';
 import { Container } from './styles';
 
 interface StandingsTableProps {
-  handleOpenStandingsModal(): void;
+  handleOpenStandingsModal(standing: Standing | undefined): void;
 }
 
 interface LocalStanding extends Standing {
@@ -16,7 +16,7 @@ interface LocalStanding extends Standing {
 export function StandingsTable({
   handleOpenStandingsModal,
 }: StandingsTableProps) {
-  const { standings } = useTournament();
+  const { standings, editStandings } = useTournament();
 
   const [localStandings, setLocalStandings] = useState([] as LocalStanding[]);
 
@@ -27,18 +27,10 @@ export function StandingsTable({
   }, [standings]);
 
   const handleEdit = useCallback(
-    (table: number) => {
-      const standingIndex = localStandings.findIndex(
-        findStanding => findStanding.table === table,
-      );
-
-      const newLocalStandings = localStandings;
-      newLocalStandings[standingIndex].isEditable =
-        !newLocalStandings[standingIndex].isEditable;
-
-      setLocalStandings([...newLocalStandings]);
+    (standing: Standing) => {
+      handleOpenStandingsModal(standing);
     },
-    [localStandings, setLocalStandings],
+    [handleOpenStandingsModal],
   );
 
   const handleInput = useCallback(
@@ -47,13 +39,19 @@ export function StandingsTable({
       field: 'scorePlayer1' | 'scorePlayer2' | 'timeExtension',
       standing: Standing,
     ) => {
+      let parsedValue = parseInt(e.target.value, 10);
+
+      parsedValue = Number.isNaN(parsedValue) ? 0 : parsedValue;
+
+      if (parsedValue > 2 || parsedValue < 0) {
+        return;
+      }
+
       const standingIndex = localStandings.findIndex(
         findStanding => findStanding.table === standing.table,
       );
 
       const newStandings = localStandings;
-
-      const parsedValue = parseInt(e.target.value, 10);
 
       switch (field) {
         case 'scorePlayer1':
@@ -74,6 +72,20 @@ export function StandingsTable({
     [localStandings],
   );
 
+  const handleSave = useCallback(
+    (localStanding: LocalStanding) => {
+      const standingIndex = localStandings.findIndex(
+        findStanding => findStanding.table === localStanding.table,
+      );
+
+      const standing: Omit<LocalStanding, 'isEditable'> =
+        localStandings[standingIndex];
+
+      editStandings({ standing });
+    },
+    [editStandings, localStandings],
+  );
+
   return (
     <Container>
       <table>
@@ -87,7 +99,10 @@ export function StandingsTable({
             <th>Player2</th>
             <th>Tempo Extra</th>
             <th className="last-row">
-              <button type="button" onClick={handleOpenStandingsModal}>
+              <button
+                type="button"
+                onClick={() => handleOpenStandingsModal(undefined)}
+              >
                 Adicionar
               </button>
             </th>
@@ -125,7 +140,6 @@ export function StandingsTable({
                   type="text"
                   placeholder="0"
                   value={standing.scorePlayer1}
-                  readOnly={!standing.isEditable}
                   onChange={e => handleInput(e, 'scorePlayer1', standing)}
                 />
               </td>
@@ -137,7 +151,6 @@ export function StandingsTable({
                   type="number"
                   placeholder="0"
                   value={standing.scorePlayer2}
-                  readOnly={!standing.isEditable}
                   onChange={e => handleInput(e, 'scorePlayer2', standing)}
                 />
               </td>
@@ -167,17 +180,13 @@ export function StandingsTable({
                   type="number"
                   placeholder="Tempo em minutos"
                   value={standing.timeExtension}
-                  readOnly={!standing.isEditable}
                   onChange={e => handleInput(e, 'timeExtension', standing)}
                 />
-                <button
-                  type="button"
-                  onClick={() => handleEdit(standing.table)}
-                >
-                  <MdModeEditOutline />
-                </button>
-                <button type="button">
+                <button type="button" onClick={() => handleSave(standing)}>
                   <MdSave />
+                </button>
+                <button type="button" onClick={() => handleEdit(standing)}>
+                  <MdModeEditOutline />
                 </button>
                 <button type="button">
                   <MdDelete />
