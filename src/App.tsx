@@ -7,6 +7,8 @@ import { GlobalStyle } from './styles/global';
 
 import { AppProvider } from './Hooks';
 
+import 'react-confirm-alert/src/react-confirm-alert.css';
+
 Modal.setAppElement('#root');
 
 export function App() {

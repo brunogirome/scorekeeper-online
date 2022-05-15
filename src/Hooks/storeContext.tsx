@@ -58,7 +58,7 @@ export function StoreProvider({ children }: Props) {
     return () => {
       window.removeEventListener('storage', onStorageUpdate);
     };
-  }, []);
+  }, [getLocalStorage]);
 
   const provider = useMemo(
     () => ({

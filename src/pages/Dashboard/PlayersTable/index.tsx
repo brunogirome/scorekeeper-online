@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { confirmAlert } from 'react-confirm-alert';
-import 'react-confirm-alert/src/react-confirm-alert.css';
 
 import { MdAddCircleOutline } from 'react-icons/md';
 

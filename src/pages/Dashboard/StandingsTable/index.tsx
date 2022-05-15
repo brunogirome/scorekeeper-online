@@ -1,7 +1,9 @@
 import { useEffect, useState, useCallback, ChangeEvent } from 'react';
 import { MdSave, MdDelete, MdModeEditOutline } from 'react-icons/md';
+import { confirmAlert } from 'react-confirm-alert';
 
 import { useTournament, Standing } from '../../../Hooks/tournamentContext';
+import { usePlayer } from '../../../Hooks/playerContext';
 
 import { Container } from './styles';
 
@@ -16,7 +18,9 @@ interface LocalStanding extends Standing {
 export function StandingsTable({
   handleOpenStandingsModal,
 }: StandingsTableProps) {
-  const { standings, editStandings } = useTournament();
+  const { standings, editStandings, removeStanding } = useTournament();
+
+  const { editPlayer } = usePlayer();
 
   const [localStandings, setLocalStandings] = useState([] as LocalStanding[]);
 
@@ -43,7 +47,7 @@ export function StandingsTable({
 
       parsedValue = Number.isNaN(parsedValue) ? 0 : parsedValue;
 
-      if (parsedValue > 2 || parsedValue < 0) {
+      if (field !== 'timeExtension' && (parsedValue > 2 || parsedValue < 0)) {
         return;
       }
 
@@ -84,6 +88,44 @@ export function StandingsTable({
       editStandings({ standing });
     },
     [editStandings, localStandings],
+  );
+
+  const handleRemove = useCallback(
+    (standing: Standing) => {
+      const { player1, player2, table } = standing;
+
+      const removeFunction = () => {
+        let player = { ...player1, currentTable: 0 };
+
+        editPlayer({ player });
+
+        player = { ...player2, currentTable: 0 };
+
+        editPlayer({ player });
+
+        removeStanding(table);
+
+        let tableNumber = 0;
+
+        setLocalStandings([
+          ...localStandings
+            .filter(({ table: localTable }) => localTable !== table)
+            .map(localTable => {
+              tableNumber += 1;
+              return { ...localTable, table: tableNumber };
+            }),
+        ]);
+      };
+
+      confirmAlert({
+        message: `Deseja remover a mesa ${table}?`,
+        buttons: [
+          { label: 'Sim', onClick: removeFunction },
+          { label: 'Não', onClick: () => undefined },
+        ],
+      });
+    },
+    [editPlayer, removeStanding, localStandings],
   );
 
   return (
@@ -188,7 +230,7 @@ export function StandingsTable({
                 <button type="button" onClick={() => handleEdit(standing)}>
                   <MdModeEditOutline />
                 </button>
-                <button type="button">
+                <button type="button" onClick={() => handleRemove(standing)}>
                   <MdDelete />
                 </button>
               </td>

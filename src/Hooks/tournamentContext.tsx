@@ -84,16 +84,20 @@ export function TournamentProvider({ children }: Props) {
 
   const removeStanding = useCallback(
     (table: number) => {
-      const newStandings = standings;
+      let tableNumber = 0;
 
-      const index = standings.findIndex(standing => standing.table === table);
-
-      newStandings.slice(index, 1);
+      const newStandings = standings
+        .filter(({ table: findTable }) => findTable !== table)
+        .map(standing => {
+          tableNumber += 1;
+          return { ...standing, table: tableNumber };
+        });
 
       localStorage.setItem(
         '@TOOnline:tournament:standings',
         JSON.stringify(newStandings),
       );
+
       setStandings([...newStandings]);
     },
     [standings],
