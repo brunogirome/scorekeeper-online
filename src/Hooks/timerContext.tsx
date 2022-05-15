@@ -14,6 +14,7 @@ interface TimerContextData {
   isPlaying: boolean;
   setRoundTime({ minutes }: { minutes: number }): void;
   playPause(): void;
+  resetTimer(): void;
 }
 
 interface Props {
@@ -109,6 +110,17 @@ export function TimerProvider({ children }: Props) {
     return parseInt(value || '0', 10);
   }
 
+  const resetTimer = useCallback(() => {
+    localStorage.setItem('@TOOnline:timer:remainingTime', '0');
+    setRemainingTime(0);
+
+    localStorage.setItem('@TOOnline:timer:roundTimeEnd', '0');
+    setRoundTimeEnd(0);
+
+    localStorage.setItem('@TOOnline:timer:isPlaying', 'false');
+    setIsPlaying(false);
+  }, []);
+
   const onStorageUpdate = useCallback((e: StorageEvent) => {
     const { key, newValue } = e;
 
@@ -179,8 +191,9 @@ export function TimerProvider({ children }: Props) {
       isPlaying,
       setRoundTime,
       playPause,
+      resetTimer,
     }),
-    [roundTime, roundTimeEnd, remainingTime, isPlaying, playPause],
+    [roundTime, roundTimeEnd, remainingTime, isPlaying, playPause, resetTimer],
   );
 
   return (

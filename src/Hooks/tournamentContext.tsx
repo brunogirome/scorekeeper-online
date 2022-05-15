@@ -35,10 +35,11 @@ interface Tournament {
 interface TournamentContextData {
   tournament: Tournament;
   standings: Standing[];
+  setTournament({ tournament }: { tournament: Tournament }): void;
   addStanding({ standing }: { standing: Standing }): void;
   editStandings({ standing }: { standing: Standing }): void;
   removeStanding(table: number): void;
-  setTournament({ tournament }: { tournament: Tournament }): void;
+  clearStandings(): void;
 }
 
 interface Props {
@@ -102,6 +103,11 @@ export function TournamentProvider({ children }: Props) {
     },
     [standings],
   );
+
+  const clearStandings = useCallback(() => {
+    localStorage.setItem('@TOOnline:tournament:standings', '[]');
+    setStandings([]);
+  }, []);
 
   const editStandings = useCallback(
     ({ standing }: { standing: Standing }) => {
@@ -174,6 +180,7 @@ export function TournamentProvider({ children }: Props) {
       editStandings,
       removeStanding,
       tournament: data,
+      clearStandings,
     }),
     [
       data,
@@ -182,6 +189,7 @@ export function TournamentProvider({ children }: Props) {
       editStandings,
       removeStanding,
       standings,
+      clearStandings,
     ],
   );
 

@@ -30,7 +30,7 @@ export function TimerCard() {
 
       setTournament({ tournament: { ...tournamentLocal } });
     },
-    [roundDescriptionLocal],
+    [roundDescriptionLocal, setTournament, tournament],
   );
 
   const handleTournamentRoundDescription = useCallback(
@@ -46,7 +46,7 @@ export function TimerCard() {
       setRoundTimeValue(roundTimeValue);
       setRoundTime({ minutes: parseInt(roundTimeValue, 10) });
     },
-    [roundTimeValue],
+    [roundTimeValue, setRoundTime],
   );
 
   const handleRoundTimeChange = useCallback(
@@ -58,7 +58,7 @@ export function TimerCard() {
 
   return (
     <Container>
-      <Timer />
+      <Timer playSong={false} />
       <button type="button" onClick={playPause}>
         Iniciar rodada
       </button>

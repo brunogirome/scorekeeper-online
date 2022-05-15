@@ -1,11 +1,18 @@
 import { useState, useCallback, FormEvent, ChangeEvent } from 'react';
+import { confirmAlert } from 'react-confirm-alert';
 
 import { useTournament } from '../../../Hooks/tournamentContext';
+import { usePlayer } from '../../../Hooks/playerContext';
+import { useTimer } from '../../../Hooks/timerContext';
 
 import { Container } from './styles';
 
 export function TournamentInfoCard() {
-  const { tournament, setTournament } = useTournament();
+  const { tournament, setTournament, standings, clearStandings } =
+    useTournament();
+  const { players, editPlayer } = usePlayer();
+
+  const { resetTimer } = useTimer();
 
   const [tournamentNameLocal, setTournamentName] = useState<string>(
     tournament.tournamentName,
@@ -15,14 +22,60 @@ export function TournamentInfoCard() {
     (e: FormEvent) => {
       e.preventDefault();
 
-      const tournamentLocal = tournament;
+      const newTounrament = tournament;
 
       tournament.tournamentName = tournamentNameLocal;
 
-      setTournament({ tournament: { ...tournamentLocal } });
+      setTournament({ tournament: { ...newTounrament } });
     },
-    [tournamentNameLocal],
+    [setTournament, tournament, tournamentNameLocal],
   );
+
+  const handleFinishRound = useCallback(() => {
+    const finishTournamentFunction = () => {
+      standings.forEach(standing => {
+        const { player1, player2, scorePlayer1, scorePlayer2 } = standing;
+
+        if (scorePlayer1 === scorePlayer2) {
+          editPlayer({
+            player: { ...player1, draws: player1.draws + 1, currentTable: 0 },
+          });
+
+          editPlayer({
+            player: { ...player2, draws: player2.draws + 1, currentTable: 0 },
+          });
+        } else if (scorePlayer1 > scorePlayer2) {
+          editPlayer({
+            player: { ...player1, wins: player1.wins + 1, currentTable: 0 },
+          });
+
+          editPlayer({
+            player: { ...player2, looses: player2.looses + 1, currentTable: 0 },
+          });
+        } else {
+          editPlayer({
+            player: { ...player2, wins: player2.wins + 1, currentTable: 0 },
+          });
+
+          editPlayer({
+            player: { ...player1, looses: player1.looses + 1, currentTable: 0 },
+          });
+        }
+      });
+
+      clearStandings();
+
+      resetTimer();
+    };
+
+    confirmAlert({
+      message: `Deseja finalizar a rodada atual?`,
+      buttons: [
+        { label: 'Sim', onClick: finishTournamentFunction },
+        { label: 'Não', onClick: () => undefined },
+      ],
+    });
+  }, [clearStandings, editPlayer, standings, resetTimer]);
 
   const handleTournamentNameChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -30,6 +83,7 @@ export function TournamentInfoCard() {
     },
     [],
   );
+
   return (
     <Container>
       <div>
@@ -46,21 +100,24 @@ export function TournamentInfoCard() {
       <div>
         <div className="generalInfo">
           <p>
-            Participantes: <span>13</span>
+            Participantes: <span>{players.length}</span>
           </p>
           <p>
-            Rodadas: <span>3</span>
+            Rodadas: <span>TBA</span>
           </p>
           <p>
-            Início da rodada: <span>13:30</span>
+            Início da rodada: <span>TBA</span>
           </p>
           <div>
-            <button type="button">Finalizar rodada</button>
+            <button type="button" onClick={handleFinishRound}>
+              Finalizar rodada
+            </button>
           </div>
         </div>
         <div className="checkboxRow">
           <h3>FINAIS</h3>
-          <p>
+          <p>TBA</p>
+          {/* <p>
             Rodada Final? <input type="checkbox" />
           </p>
           <p>
@@ -68,7 +125,7 @@ export function TournamentInfoCard() {
           </p>
           <p>
             Usar foto dos jogadores? <input type="checkbox" />
-          </p>
+          </p> */}
         </div>
         <div className="checkboxRow">
           <h3>EXIBIÇÃO</h3>

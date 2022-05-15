@@ -19,7 +19,7 @@ export function Header() {
         </div>
         <TimerContainer>
           <h1>{roundTime} minutos</h1>
-          <Timer />
+          <Timer playSong />
         </TimerContainer>
       </div>
     </Container>

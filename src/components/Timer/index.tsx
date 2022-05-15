@@ -1,38 +1,45 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 import { useTimer } from '../../Hooks/timerContext';
 
-export function Timer() {
+interface Props {
+  playSong: boolean;
+}
+
+export function Timer({ playSong }: Props) {
   const Ref = useRef<NodeJS.Timer | null>(null);
 
   const { roundTime, remainingTime, isPlaying, roundTimeEnd } = useTimer();
 
-  const formatTime = (
-    timeInMilleSeconds: number,
-    type: 'minutesSeconds' | 'milleseconds',
-  ): string => {
-    if (type === 'milleseconds') {
-      const milleseconds = Math.floor(timeInMilleSeconds % 1000);
+  const formatTime = useCallback(
+    (
+      timeInMilleSeconds: number,
+      type: 'minutesSeconds' | 'milleseconds',
+    ): string => {
+      if (type === 'milleseconds') {
+        const milleseconds = Math.floor(timeInMilleSeconds % 1000);
 
-      let formattedMilleseconds: string = milleseconds.toString();
+        let formattedMilleseconds: string = milleseconds.toString();
 
-      if (milleseconds < 100) {
-        formattedMilleseconds = `0${milleseconds}`;
-      } else if (milleseconds < 10) {
-        formattedMilleseconds = `00${milleseconds}`;
+        if (milleseconds < 100) {
+          formattedMilleseconds = `0${milleseconds}`;
+        } else if (milleseconds < 10) {
+          formattedMilleseconds = `00${milleseconds}`;
+        }
+
+        return `:${formattedMilleseconds.slice(0, 2)}`;
       }
 
-      return `:${formattedMilleseconds.slice(0, 2)}`;
-    }
+      const minutes = Math.floor(timeInMilleSeconds / 1000 / 60);
 
-    const minutes = Math.floor(timeInMilleSeconds / 1000 / 60);
+      const seconds = Math.floor((timeInMilleSeconds / 1000) % 60);
 
-    const seconds = Math.floor((timeInMilleSeconds / 1000) % 60);
-
-    return `${minutes > 9 ? minutes : `0${minutes}`}:${
-      seconds > 9 ? seconds : `0${seconds}`
-    }`;
-  };
+      return `${minutes > 9 ? minutes : `0${minutes}`}:${
+        seconds > 9 ? seconds : `0${seconds}`
+      }`;
+    },
+    [],
+  );
 
   const [minutesSeconds, setMinutesSeconds] = useState<string>(() => {
     if (remainingTime === 0) {
@@ -53,10 +60,11 @@ export function Timer() {
   useEffect(() => {
     if (Ref.current) clearInterval(Ref.current);
 
-    if (roundTimeEnd > 0 && isPlaying) {
+    let timeRemaining = roundTimeEnd - Date.parse(new Date().toISOString());
+
+    if (timeRemaining > 0 && isPlaying) {
       const id = setInterval(() => {
-        const timeRemaining =
-          roundTimeEnd - Date.parse(new Date().toISOString());
+        timeRemaining = roundTimeEnd - Date.parse(new Date().toISOString());
 
         if (timeRemaining < 0) {
           setMilleseconds(':00');
@@ -71,7 +79,12 @@ export function Timer() {
 
       Ref.current = id;
     }
-  }, [isPlaying]);
+
+    if (minutesSeconds + milleseconds === '00:00:00') {
+      const audio = new Audio('/bell.mp3');
+      audio.play();
+    }
+  }, [formatTime, isPlaying, milleseconds, minutesSeconds, roundTimeEnd]);
 
   return (
     <div className="timer-number">
